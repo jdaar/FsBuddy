@@ -4,14 +4,14 @@ using Serilog.Context;
 
 namespace Service
 {
-    class FsWatcherDisposable : IDisposable
+    class FileSystemWatcherDisposable : IDisposable
     {
         private bool disposed = false;
         private Watcher _watcher;
 
         public FileSystemWatcher? fsWatcher;
 
-        public FsWatcherDisposable(Watcher watcher)
+        public FileSystemWatcherDisposable(Watcher watcher)
         {
             _watcher = watcher;
             using (LogContext.PushProperty("WatcherId", _watcher.Id))
@@ -103,10 +103,10 @@ namespace Service
         }
     }
 
-    public class WatcherManager : BackgroundService
+    class WatcherManager : BackgroundService
     {
         private readonly ManagerConfiguration _managerConfiguration;
-        private List<FsWatcherDisposable> fsWatchers = new List<FsWatcherDisposable>();
+        private List<FileSystemWatcherDisposable> fsWatchers = new List<FileSystemWatcherDisposable>();
 
         public WatcherManager(ManagerConfiguration managerConfiguration)
         {
@@ -115,50 +115,40 @@ namespace Service
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            var watchers = await _managerConfiguration.GetWatchers();
+
+            foreach (var watcher in watchers)
             {
-                bool watchersChanged = await _managerConfiguration.WatchersChanged();
-                if (watchersChanged) {
-                    Log.Information("Watchers change detected at {Now}", DateTime.Now);
+                try
+                {
+                    var fsWatcherDisposable = new FileSystemWatcherDisposable(watcher);
 
-                    var watchers = await _managerConfiguration.GetWatchers();
-                    fsWatchers.ForEach(fsWatcher => fsWatcher.Dispose());
-                    fsWatchers = new List<FsWatcherDisposable>();
+                    fsWatchers.Add(fsWatcherDisposable);
 
-                    foreach (var watcher in watchers)
+                    if (fsWatcherDisposable.fsWatcher != null)
                     {
-                        try
-                        {
-                            var fsWatcherDisposable = new FsWatcherDisposable(watcher);
-
-                            fsWatchers.Add(fsWatcherDisposable);
-
-                            if (fsWatcherDisposable.fsWatcher != null)
-                            {
-                                fsWatcherDisposable.fsWatcher.EnableRaisingEvents = true;
-                            } else
-                            {
-                                fsWatcherDisposable.Dispose();
-                                fsWatchers.Remove(fsWatcherDisposable);
-                            }
-                        } catch (ArgumentNullException error)
-                        {
-                            Log.Error("Instantiated FsWatcher for: {InputPath}", watcher.InputPath);
-                            Log.Error(error.Message);
-                        } catch (ArgumentException error)
-                        {
-                            Log.Error("Instantiated FsWatcher for: {InputPath}", watcher.InputPath);
-                            Log.Error(error.Message);
-                        } 
+                        fsWatcherDisposable.fsWatcher.EnableRaisingEvents = true;
+                    } else
+                    {
+                        fsWatcherDisposable.Dispose();
+                        fsWatchers.Remove(fsWatcherDisposable);
                     }
-                }
-                await Task.Delay(30000);
+                } catch (ArgumentNullException error)
+                {
+                    Log.Error("Instantiated FsWatcher for: {InputPath}", watcher.InputPath);
+                    Log.Error(error.Message);
+                } catch (ArgumentException error)
+                {
+                    Log.Error("Instantiated FsWatcher for: {InputPath}", watcher.InputPath);
+                    Log.Error(error.Message);
+                } 
             }
         }
+
         public override async Task StopAsync(CancellationToken stoppingToken)
         {
             fsWatchers.ForEach(fsWatcher => fsWatcher.Dispose());
-            fsWatchers = new List<FsWatcherDisposable>();
+            fsWatchers = new List<FileSystemWatcherDisposable>();
             await base.StopAsync(stoppingToken);
         }
     }

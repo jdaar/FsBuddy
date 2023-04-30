@@ -6,13 +6,13 @@ using Serilog.Core;
 
 namespace Service
 {
-    public class Service
+    class FileSystemService
     {
         private string appDirectoryPath;
         private string logDirectoryPath;
-        private IHost _host;
+        private IHostBuilder _hostBuilder;
 
-        public Logger LoggerFactory()
+        private Logger LoggerFactory()
         {
             var logFilePath = Path.Join(logDirectoryPath, $"service_.log");
 
@@ -29,7 +29,7 @@ namespace Service
                 .CreateLogger();
         }
 
-        public Service()
+        public FileSystemService()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
@@ -42,7 +42,7 @@ namespace Service
 
             Log.Logger = LoggerFactory();
 
-            _host = Host.CreateDefaultBuilder()
+            _hostBuilder = Host.CreateDefaultBuilder()
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
@@ -52,13 +52,13 @@ namespace Service
                 {
                     services.AddSingleton<ManagerConfiguration>();
                     services.AddHostedService<WatcherManager>();
-                })
-                .Build();
+                });
         }
 
-        public async Task StartAsync()
+        public async Task RunAsync()
         {
-            await _host.StartAsync();
+            await _hostBuilder.Build().RunAsync();
         }
     }
+
 }

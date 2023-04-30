@@ -7,67 +7,82 @@ namespace Service
     class FsWatcherDisposable : IDisposable
     {
         private bool disposed = false;
-        private IDisposable loggerContext;
+        private Watcher _watcher;
 
         public FileSystemWatcher? fsWatcher;
 
         public FsWatcherDisposable(Watcher watcher)
         {
-            loggerContext = LogContext.PushProperty("WatcherName", watcher.Name);
-
+            _watcher = watcher;
+            using (LogContext.PushProperty("WatcherId", _watcher.Id))
             {
-                if (watcher.InputPath == null)
                 {
-                    throw new ArgumentNullException("InputPath cannot be null");
+                    if (watcher.InputPath == null)
+                    {
+                        throw new ArgumentNullException("InputPath cannot be null");
+                    }
+
+                    try
+                    {
+                        fsWatcher = new FileSystemWatcher(watcher.InputPath);
+                    }
+                    catch (ArgumentException)
+                    {
+                        fsWatcher = null;
+                        throw new ArgumentException($"Path for FsWatcher is not valid: {watcher.InputPath}");
+                    }
+
+                    fsWatcher.NotifyFilter = NotifyFilters.Attributes
+                                         | NotifyFilters.CreationTime
+                                         | NotifyFilters.DirectoryName
+                                         | NotifyFilters.FileName
+                                         | NotifyFilters.LastAccess
+                                         | NotifyFilters.LastWrite
+                                         | NotifyFilters.Security
+                                         | NotifyFilters.Size;
+
+                    fsWatcher.Created += Created;
+                    fsWatcher.Deleted += Deleted;
+                    fsWatcher.Renamed += Renamed;
+                    fsWatcher.Changed += Changed;
+
+                    fsWatcher.Filter = watcher.SearchPattern ?? "*.*";
+                    fsWatcher.IncludeSubdirectories = true;
+
+                    Log.Information("Instantiated FsWatcher for: {InputPath}", watcher.InputPath);
                 }
-
-                try
-                {
-                    fsWatcher = new FileSystemWatcher(watcher.InputPath);
-                } catch (ArgumentException)
-                {
-                    fsWatcher = null;
-                    throw new ArgumentException($"Path for FsWatcher is not valid: {watcher.InputPath}");
-                }
-
-                fsWatcher.NotifyFilter = NotifyFilters.Attributes
-                                     | NotifyFilters.CreationTime
-                                     | NotifyFilters.DirectoryName
-                                     | NotifyFilters.FileName
-                                     | NotifyFilters.LastAccess
-                                     | NotifyFilters.LastWrite
-                                     | NotifyFilters.Security
-                                     | NotifyFilters.Size;
-
-                fsWatcher.Created += Created;
-                fsWatcher.Deleted += Deleted;
-                fsWatcher.Renamed += Renamed;
-                fsWatcher.Changed += Changed;
-
-                fsWatcher.Filter = watcher.SearchPattern ?? "*.*";
-                fsWatcher.IncludeSubdirectories = true;
-
-                Log.Information("Instantiated FsWatcher for: {InputPath}", watcher.InputPath);
             }
         }
         private void Created(object sender, FileSystemEventArgs e)
         {
-            Log.Information("File created: {FullPath}", e.FullPath);
+            using (LogContext.PushProperty("WatcherId", _watcher.Id))
+            {
+                Log.Information("File created: {FullPath}", e.FullPath);
+            }
         }
 
         private void Deleted(object sender, FileSystemEventArgs e)
         {
-            Log.Information("File deleted: {FullPath}", e.FullPath);
+            using (LogContext.PushProperty("WatcherId", _watcher.Id))
+            {
+                Log.Information("File deleted: {FullPath}", e.FullPath);
+            }
         }
 
         private void Renamed(object sender, FileSystemEventArgs e)
         {
-            Log.Information("File renamed: {FullPath}", e.FullPath);
+            using (LogContext.PushProperty("WatcherId", _watcher.Id))
+            {
+                Log.Information("File renamed: {FullPath}", e.FullPath);
+            }
         }
 
         private void Changed(object sender, FileSystemEventArgs e)
         {
-            Log.Information("File changed: {FullPath}", e.FullPath);
+            using (LogContext.PushProperty("WatcherId", _watcher.Id))
+            {
+                Log.Information("File changed: {FullPath}", e.FullPath);
+            }
         }
 
         public void Dispose()
@@ -81,7 +96,6 @@ namespace Service
             }
 
             fsWatcher.Dispose();
-            loggerContext.Dispose();
 
             disposed = true;
 
@@ -101,13 +115,13 @@ namespace Service
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var watchers = await _managerConfiguration.GetWatchers();
             while (!stoppingToken.IsCancellationRequested)
             {
-                Log.Information("Reloading watchers from database");
-
                 bool watchersChanged = await _managerConfiguration.WatchersChanged();
                 if (watchersChanged) {
+                    Log.Information("Watchers change detected at {Now}", DateTime.Now);
+
+                    var watchers = await _managerConfiguration.GetWatchers();
                     fsWatchers.ForEach(fsWatcher => fsWatcher.Dispose());
                     fsWatchers = new List<FsWatcherDisposable>();
 
@@ -140,6 +154,12 @@ namespace Service
                 }
                 await Task.Delay(30000);
             }
+        }
+        public override async Task StopAsync(CancellationToken stoppingToken)
+        {
+            fsWatchers.ForEach(fsWatcher => fsWatcher.Dispose());
+            fsWatchers = new List<FsWatcherDisposable>();
+            await base.StopAsync(stoppingToken);
         }
     }
 }

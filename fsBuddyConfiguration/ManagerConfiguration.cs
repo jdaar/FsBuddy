@@ -18,7 +18,7 @@ namespace Configuration
         private readonly ILogger<ManagerConfiguration> _logger;
         private readonly string appDirectoryPath;
 
-        private List<int> cachedIds = new List<int>();
+        private List<Watcher> cachedWatchers = new List<Watcher>();
 
         public ManagerConfiguration(ILogger<ManagerConfiguration> logger) { 
             _logger = logger;
@@ -64,14 +64,13 @@ namespace Configuration
         public async Task<bool> WatchersChanged()
         {
             var watchers = await GetWatchers();
-            var executionIds = watchers.Select(watcher => watcher.Id);
             var result = false;
 
-            if (!Enumerable.SequenceEqual(executionIds, cachedIds))
+            if (!Enumerable.SequenceEqual(watchers, cachedWatchers))
             {
                 result = true;
             }
-            cachedIds = executionIds.ToList();
+            cachedWatchers = watchers;
             return result;
         }
     }

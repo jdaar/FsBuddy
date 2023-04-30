@@ -3,8 +3,6 @@ using Serilog;
 using Configuration;
 using Serilog.Formatting.Compact;
 
-// App folder creation
-
 var folder = Environment.SpecialFolder.LocalApplicationData;
 var path = Environment.GetFolderPath(folder);
 
@@ -13,8 +11,6 @@ var logDirectoryPath = Path.Join(appDirectoryPath, "logs");
 
 Directory.CreateDirectory(appDirectoryPath);
 Directory.CreateDirectory(logDirectoryPath);
-
-// Logs
 
 var logFilePath = Path.Join(logDirectoryPath, $"service_.log");
 
@@ -29,7 +25,6 @@ Log.Logger = new LoggerConfiguration()
     )
     .Enrich.FromLogContext()
     .CreateLogger();
-
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>

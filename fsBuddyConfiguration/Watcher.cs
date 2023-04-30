@@ -18,13 +18,14 @@ namespace Configuration
 
         [Required]
         [StringLength(100)]
+        [Index(IsUnique = true)]
         [Column(name: "name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Required]
         [StringLength(100)]
         [Column(name: "search_pattern")]
-        public string SearchPattern { get; set; }
+        public string? SearchPattern { get; set; }
 
         [Required]
         [Column(name: "created_at")]
@@ -34,11 +35,11 @@ namespace Configuration
         [Required]
         [StringLength(256)]
         [Column(name: "input_path")]
-        public string InputPath { get; set; }
+        public string? InputPath { get; set; }
 
         [Required]
         [StringLength(256)]
         [Column(name: "output_path")]
-        public string OutputPath { get; set; }
+        public string? OutputPath { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace Configuration
     public class ConfigurationContext : DbContext
     {
         public DbSet<Watcher> Watchers { get; set; }
+        public DbSet<ServiceSetting> SystemSettings { get; set; }
 
         public ConfigurationContext(DbContextOptions<ConfigurationContext> options) : base(options) {}
 

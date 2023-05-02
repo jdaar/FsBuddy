@@ -3,6 +3,7 @@ using Serilog;
 using Configuration;
 using Serilog.Formatting.Compact;
 using Serilog.Core;
+using System.ComponentModel.Design;
 
 namespace Service
 {
@@ -51,13 +52,33 @@ namespace Service
                 .ConfigureServices(services =>
                 {
                     services.AddSingleton<ManagerConfiguration>();
-                    services.AddHostedService<WatcherManager>();
+
+                    services.AddSingleton<WatcherManager>();
+                    services.AddHostedService(provider => provider.GetService<WatcherManager>());
+
+                    services.AddHostedService<PipeManager>();
                 });
         }
 
         public async Task RunAsync()
         {
-            await _hostBuilder.Build().RunAsync();
+            var host = _hostBuilder.Build();
+            ManagerConfiguration? _manager = host.Services.GetService<ManagerConfiguration>();
+
+            if (_manager == null) { 
+                Log.Fatal("Couldn't retrieve ManagerConfiguration service");
+                return;
+            };
+
+            var serviceSettingsExists = await _manager.ServiceSettingsExists();
+
+            if (!serviceSettingsExists)
+            {
+                Log.Information("Recreating service settings table");
+                await _manager.CreateDefaultServiceSettings();
+            }
+
+            await host.RunAsync();
         }
     }
 

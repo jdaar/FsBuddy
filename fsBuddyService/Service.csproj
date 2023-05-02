@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ConnectionInterface\ConnectionInterface.csproj" />
     <ProjectReference Include="..\fsBuddyConfiguration\Configuration.csproj" />
   </ItemGroup>
 </Project>

@@ -15,14 +15,9 @@ namespace Configuration
     public class ManagerConfiguration
     {
         private ConfigurationContext _context;
-        private readonly ILogger<ManagerConfiguration> _logger;
         private readonly string appDirectoryPath;
 
-        private List<Watcher> cachedWatchers = new List<Watcher>();
-
-        public ManagerConfiguration(ILogger<ManagerConfiguration> logger) { 
-            _logger = logger;
-
+        public ManagerConfiguration() { 
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
 
@@ -44,11 +39,10 @@ namespace Configuration
             _context.Dispose();
         }
 
-        public async void CreateWatcher(Watcher watcher)
+        public async Task CreateWatcher(Watcher watcher)
         {
             if (_context.Watchers.Where(_watcher => _watcher.Name == watcher.Name).Count() > 0)
             {
-                _logger.LogInformation("Watchers already exist");
                 return;
             }
 
@@ -60,18 +54,21 @@ namespace Configuration
         {
             return await _context.Watchers.ToListAsync();
         }
-
-        public async Task<bool> WatchersChanged()
+        public async Task<ServiceSetting?> GetServiceSetting(SettingType type)
         {
-            var watchers = await GetWatchers();
-            var result = false;
+            return await _context.SystemSettings.Where(setting => setting.Type == type).FirstOrDefaultAsync();
+        }
 
-            if (!Enumerable.SequenceEqual(watchers, cachedWatchers))
-            {
-                result = true;
-            }
-            cachedWatchers = watchers;
-            return result;
+        public async Task<bool> ServiceSettingsExists()
+        {
+            return await _context.SystemSettings.CountAsync() != 0;
+        }
+
+        public async Task CreateDefaultServiceSettings()
+        {
+            var ThreadNumberSetting = new ServiceSetting { Type = SettingType.THREAD_NUMBER , Value = 2 };
+            await _context.SystemSettings.AddAsync(ThreadNumberSetting);
+            await _context.SaveChangesAsync();
         }
     }
 }

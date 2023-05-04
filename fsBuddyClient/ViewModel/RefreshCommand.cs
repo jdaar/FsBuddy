@@ -26,20 +26,20 @@ namespace Client.ViewModel
             return true;
         }
 
-
         public async void Execute(object parameter)
         {
-            var payload = new Dictionary<IRequestPayload, object>();
-
-            payload.Add(IRequestPayload.WATCHER_ID, 1);
-
             var request = new PipeRequest
             {
-                Command = ConnectionInterface.IPipeCommand.GET_WATCHER,
-                Payload = payload
+                Command = IPipeCommand.GET_WATCHER,
+                Payload = new PipeRequestPayload
+                {
+                    WatcherId = 1
+                }
             };
 
-            await _serviceConnection.SendPipeRequest(request);           
+           var response = await _serviceConnection.SendPipeRequest(request);
+
+            MessageBox.Show($"Status: {response?.Status}. Payload: {response?.Payload?.ErrorMessage}");
         }
     }
 }

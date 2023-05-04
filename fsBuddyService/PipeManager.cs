@@ -107,14 +107,14 @@ namespace Service
                     } catch (Exception error)
                     {
                         Log.Error(error, "Error parsing request");
-                        await SendPipeResponse(await PipeSerializer.ErrorFactory(error.Message));
+                        await SendPipeResponse(PipeSerializer.ErrorFactory(error.Message));
                         continue;
                     }
 
                     if (request == null)
                     {
                         Log.Error("Error processing request");
-                        await SendPipeResponse(await PipeSerializer.ErrorFactory("Request body has to be set"));
+                        await SendPipeResponse(PipeSerializer.ErrorFactory("Request body has to be set"));
                         continue;
                     }
 
@@ -123,14 +123,12 @@ namespace Service
                     var response = new PipeResponse
                     {
                         Status = IResponseStatus.SUCCESS,
-                        Payload = new Dictionary<IResponsePayload, object>()
+                        Payload = new PipeResponsePayload { }
                     };
 
                     var responseString = await PipeSerializer.SerializeResponse(response);
 
                     _writer.WriteLine(responseString);
-
-                    Log.Information("Update: {@0}", await _configurationManager.GetServiceSetting(SettingType.THREAD_NUMBER));
 
                     try
                     {

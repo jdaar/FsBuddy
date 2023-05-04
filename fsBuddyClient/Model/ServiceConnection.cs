@@ -35,7 +35,7 @@ namespace Client.Model
             _writer.Dispose();
         }
 
-        public async Task SendPipeRequest(PipeRequest request)
+        public async Task<PipeResponse?> SendPipeRequest(PipeRequest request)
         {
             var serializedRequest = await PipeSerializer.SerializeRequest(request);
 
@@ -56,10 +56,12 @@ namespace Client.Model
                 throw new Exception("Couldn't deserialize response");
             }
 
-            if (deserializedResponse.Status == IResponseStatus.SUCCESS)
+            if (deserializedResponse.Status != IResponseStatus.SUCCESS)
             {
-                MessageBox.Show($"Response: {deserializedResponse.Payload}");
+                MessageBox.Show($"Service error: {deserializedResponse.Payload}");
             }
+
+            return deserializedResponse;
         }
     }
 }

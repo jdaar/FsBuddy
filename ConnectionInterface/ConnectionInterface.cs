@@ -17,23 +17,27 @@ namespace ConnectionInterface
         DELETE_SERVICESETTING = 9,
     }
 
-    public enum IRequestPayload
+    public class IPayloadWatcher { }
+
+    public class IPayloadServiceSetting { }
+
+    public class PipeRequestPayload
     {
-        WATCHER_ID = 0,
-        SERVICESETTING_ID = 1,
-        WATCHER_DATA = 2,
-        SERVICESETTING_DATA = 3,
+        public int? WatcherId { get; set; }
+        public int? ServiceSettingId { get; set; }
+        public IPayloadWatcher? WatcherData { get; set; }
+        public IPayloadServiceSetting? ServiceSettingData { get; set; }
     }
 
     public class PipeRequest
     {
         public IPipeCommand Command { get; set; }
-        public Dictionary<IRequestPayload, object> Payload { get; set; }
+        public PipeRequestPayload? Payload { get; set; }
     } 
 
-    public enum IResponsePayload
+    public class PipeResponsePayload
     {
-        ERROR_MESSAGE = 0,
+        public string? ErrorMessage { get; set; }
     }
 
     public enum IResponseStatus
@@ -45,7 +49,7 @@ namespace ConnectionInterface
     public class PipeResponse
     {
         public IResponseStatus Status { get; set; }
-        public Dictionary<IResponsePayload, object> Payload { get; set; }
+        public PipeResponsePayload? Payload { get; set; }
     }
 
     public class PipeSerializer
@@ -64,24 +68,31 @@ namespace ConnectionInterface
 
         public static async Task<string> SerializeResponse(PipeResponse pipeResponse)
         {
-            var response = JsonSerializer.Serialize<PipeResponse>(pipeResponse);
-            return response;
+            using var stream = new MemoryStream();
+            await JsonSerializer.SerializeAsync<PipeResponse>(stream, pipeResponse);
+            stream.Position = 0;
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
         }
 
         public static async Task<string> SerializeRequest(PipeRequest pipeRequest)
         {
-            var response = JsonSerializer.Serialize<PipeRequest>(pipeRequest);
-            return response;
+            using var stream = new MemoryStream();
+            await JsonSerializer.SerializeAsync<PipeRequest>(stream, pipeRequest);
+            stream.Position = 0;
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
         }
 
-        public static async Task<PipeResponse> ErrorFactory(string error_message)
+        public static PipeResponse ErrorFactory(string error_message)
         {
-            var payload = new Dictionary<IResponsePayload, object>();
-            payload.Add(IResponsePayload.ERROR_MESSAGE, error_message);
             return new PipeResponse
             {
                 Status = IResponseStatus.FAILURE,
-                Payload = payload,
+                Payload = new PipeResponsePayload
+                {
+                    ErrorMessage = error_message,
+                },
             };
         }
     }

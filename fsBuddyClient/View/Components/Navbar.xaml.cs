@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Client.View
+namespace Client.View.Components
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class RefreshButton : UserControl
+    public partial class Navbar : UserControl
     {
-        public RefreshButton()
+        public Navbar()
         {
             InitializeComponent();
         }

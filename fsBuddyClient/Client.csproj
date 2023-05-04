@@ -8,7 +8,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\font.ttf" />
+    <None Remove="Assets\Icons\create.png" />
+    <None Remove="Assets\Icons\logs.png" />
+    <None Remove="Assets\Icons\shrink.png" />
+    <None Remove="Assets\logo_black.jpg" />
+    <None Remove="Assets\logo_black.svg" />
+    <None Remove="Assets\logo_dark.png" />
+    <None Remove="Assets\logo_white.jpg" />
+    <None Remove="Assets\logo_white.png" />
+    <None Remove="Assets\logo_white.svg" />
+    <None Remove="Assets\montserrat.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ConnectionInterface\ConnectionInterface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Icons\create.png" />
+    <Resource Include="Assets\Icons\logs.png" />
+    <Resource Include="Assets\Icons\shrink.png" />
+    <Resource Include="Assets\logo_black.jpg" />
+    <Resource Include="Assets\logo_black.svg" />
+    <Resource Include="Assets\logo_dark.png" />
+    <Resource Include="Assets\logo_white.jpg" />
+    <Resource Include="Assets\logo_white.png" />
+    <Resource Include="Assets\logo_white.svg" />
+    <Resource Include="Assets\montserrat.ttf">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

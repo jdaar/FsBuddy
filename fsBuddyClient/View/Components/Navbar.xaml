@@ -116,10 +116,10 @@
                                                 />
                                             </Grid>
                                             <TextBlock 
+                                                Text="{Binding IsConnected}"
                                                 Grid.Column="1"
                                                 Style="{StaticResource BadgeLabel}"
                                                 >
-                                                Active
                                             </TextBlock>
                                         </Grid>
                                     </Border>

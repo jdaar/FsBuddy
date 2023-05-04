@@ -25,6 +25,10 @@
             Key="F5" 
             Command="{Binding Path=RefreshCommand}"
         />
+        <KeyBinding 
+            Key="F10" 
+            Command="{Binding Path=SwitchConnectionStatusCommand}"
+        />
     </Window.InputBindings>
 
     <Window.Resources>

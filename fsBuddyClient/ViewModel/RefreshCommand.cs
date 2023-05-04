@@ -26,7 +26,7 @@ namespace Client.ViewModel
             return true;
         }
 
-        public async void Execute(object parameter)
+        public async Task Execute(object parameter)
         {
             var request = new PipeRequest
             {
@@ -38,6 +38,12 @@ namespace Client.ViewModel
             };
 
            var response = await _serviceConnection.SendPipeRequest(request);
+
+            if (response == null)
+            {
+                MessageBox.Show("Couldn't retrieve service response", "Pipe error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             MessageBox.Show($"Status: {response?.Status}. Payload: {response?.Payload?.ErrorMessage}");
         }

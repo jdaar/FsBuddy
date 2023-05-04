@@ -20,9 +20,16 @@ namespace Client.ViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ServiceConnection serviceConnection = new ServiceConnection();
+        public ServiceConnection serviceConnection;
+
+        public bool IsConnected {
+            get {
+                return serviceConnection.IsConnected;
+            }
+        }
 
         public ICommand RefreshCommand { get; set; }
+        public ICommand SwitchConnectionStatusCommand { get; set; }
 
         public void OnPropertyChanged(string propertyName)
         {
@@ -30,8 +37,17 @@ namespace Client.ViewModel
         }
 
         public Presenter()
-        {
+        { 
+            serviceConnection = new ServiceConnection(
+                delegate()
+                {
+                    OnPropertyChanged(nameof(serviceConnection));
+                    OnPropertyChanged(nameof(IsConnected));
+                }
+            );
+
             RefreshCommand = new RefreshCommand(serviceConnection);
+            SwitchConnectionStatusCommand = new SwitchConnectionStatus(serviceConnection);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Configuration
+namespace ConnectionInterface 
 {
     [Table(name: "watchers")]
     public class Watcher
@@ -18,7 +18,6 @@ namespace Configuration
 
         [Required]
         [StringLength(100)]
-        [Index(IsUnique = true)]
         [Column(name: "name")]
         public string? Name { get; set; }
 

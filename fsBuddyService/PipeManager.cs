@@ -80,8 +80,21 @@ namespace Service
         private async Task SendPipeResponse(PipeResponse pipeResponse)
         {
             var responseString = await PipeSerializer.SerializeResponse(pipeResponse);
-            _writer.WriteLine($"Server: {responseString}");
+            _writer.WriteLine(responseString);
             await _writer.FlushAsync();
+        }
+
+        private async Task<PipeResponse> ProcessPipeRequest(PipeRequest pipeRequest)
+        {
+            if (pipeRequest.Command == IPipeCommand.CREATE_WATCHER)
+            {
+                Log.Information("Creating watcher: {@pipeRequest}", pipeRequest);
+            }
+            return new PipeResponse
+            {
+                Status = IResponseStatus.SUCCESS,
+                Payload = new PipeResponsePayload { }
+            };
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -120,11 +133,7 @@ namespace Service
 
                     Log.Information("Request: {@request}", request);
 
-                    var response = new PipeResponse
-                    {
-                        Status = IResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { }
-                    };
+                    var response = await ProcessPipeRequest(request);
 
                     var responseString = await PipeSerializer.SerializeResponse(response);
 

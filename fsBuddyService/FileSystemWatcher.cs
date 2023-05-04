@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Configuration;
 using Serilog;
 using Serilog.Context;
+using ConnectionInterface;
 
 namespace Service
 {

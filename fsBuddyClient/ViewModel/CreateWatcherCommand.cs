@@ -10,13 +10,13 @@ using ConnectionInterface;
 
 namespace Client.ViewModel
 {
-    public class RefreshCommand : ICommand
+    public class CreateWatcherCommand : ICommand
     {
         private readonly ServiceConnection _serviceConnection;
 
         public event EventHandler CanExecuteChanged { add { } remove { } }
 
-        public RefreshCommand(ServiceConnection serviceConnection)
+        public CreateWatcherCommand(ServiceConnection serviceConnection)
         {
             _serviceConnection = serviceConnection;
         }
@@ -30,10 +30,16 @@ namespace Client.ViewModel
         {
             var request = new PipeRequest
             {
-                Command = IPipeCommand.GET_WATCHER,
+                Command = IPipeCommand.CREATE_WATCHER,
                 Payload = new PipeRequestPayload
                 {
-                    WatcherId = 1
+                    WatcherData = new Watcher
+                    {
+                        Name = "Test",
+                        InputPath = @"C:\fsBuddyTestData",
+                        OutputPath = @"C:\fsBuddyTestData",
+                        SearchPattern = "*.*",
+                    }
                 }
             };
 
@@ -45,7 +51,7 @@ namespace Client.ViewModel
                 return;
             }
 
-            MessageBox.Show($"Status: {response?.Status}. Payload: {response?.Payload?.Watchers}");
+            MessageBox.Show($"Status: {response?.Status}");
         }
     }
 }

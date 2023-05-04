@@ -17,16 +17,12 @@ namespace ConnectionInterface
         DELETE_SERVICESETTING = 9,
     }
 
-    public class IPayloadWatcher { }
-
-    public class IPayloadServiceSetting { }
-
     public class PipeRequestPayload
     {
         public int? WatcherId { get; set; }
         public int? ServiceSettingId { get; set; }
-        public IPayloadWatcher? WatcherData { get; set; }
-        public IPayloadServiceSetting? ServiceSettingData { get; set; }
+        public Watcher? WatcherData { get; set; }
+        public ServiceSetting? ServiceSettingData { get; set; }
     }
 
     public class PipeRequest
@@ -38,6 +34,7 @@ namespace ConnectionInterface
     public class PipeResponsePayload
     {
         public string? ErrorMessage { get; set; }
+        public List<Watcher>? Watchers { get; set; }
     }
 
     public enum IResponseStatus

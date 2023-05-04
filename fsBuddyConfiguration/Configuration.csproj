@@ -20,4 +20,8 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConnectionInterface\ConnectionInterface.csproj" />
+  </ItemGroup>
+
 </Project>

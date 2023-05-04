@@ -29,6 +29,10 @@
             Key="F10" 
             Command="{Binding Path=SwitchConnectionStatusCommand}"
         />
+        <KeyBinding 
+            Key="F11" 
+            Command="{Binding Path=CreateWatcherCommand}"
+        />
     </Window.InputBindings>
 
     <Window.Resources>

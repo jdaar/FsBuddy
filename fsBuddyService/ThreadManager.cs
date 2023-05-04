@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Configuration;
 using Serilog;
 using Serilog.Context;
+using ConnectionInterface;
 
 namespace Service
 {
@@ -41,6 +42,12 @@ namespace Service
             if (threads.Count != 0)
             {
                 StopThreads();
+            }
+
+            if (watchers.Count == 0)
+            {
+                Log.Information("No watchers to initialize");
+                return;
             }
 
             var threadWatcherCount = watchers.Count() / ThreadNumber;

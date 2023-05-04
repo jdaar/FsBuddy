@@ -10,13 +10,13 @@ using ConnectionInterface;
 
 namespace Client.ViewModel
 {
-    public class SwitchConnectionStatus : ICommand
+    public class SwitchConnectionStatusCommand : ICommand
     {
         private readonly ServiceConnection _serviceConnection;
 
         public event EventHandler CanExecuteChanged { add { } remove { } }
 
-        public SwitchConnectionStatus(ServiceConnection serviceConnection)
+        public SwitchConnectionStatusCommand(ServiceConnection serviceConnection)
         {
             _serviceConnection = serviceConnection;
         }
@@ -26,7 +26,7 @@ namespace Client.ViewModel
             return true;
         }
 
-        public async void Execute(object parameter)
+        public void Execute(object parameter)
         {
             if (_serviceConnection.IsConnected)
             {

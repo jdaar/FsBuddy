@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Configuration
+namespace ConnectionInterface 
 {
     public enum SettingType: int
     {
@@ -23,7 +23,6 @@ namespace Configuration
 
         [Required]
         [Column(name: "type")]
-        [Index(IsUnique = true)]
         public SettingType Type { get; set; }
 
         [Required]

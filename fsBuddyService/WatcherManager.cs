@@ -1,6 +1,7 @@
 using Serilog;
 using Configuration;
 using Serilog.Context;
+using ConnectionInterface;
 
 namespace Service
 {
@@ -16,7 +17,7 @@ namespace Service
         {
             _managerConfiguration = managerConfiguration;
         }
-        public async Task RetrieveServiceSettings()
+        private async Task RetrieveServiceSettings()
         {
             threadNumber = (await _managerConfiguration.GetServiceSetting(SettingType.THREAD_NUMBER))?.Value ?? 1;
             Log.Information("Setting ThreadNumber: {threadNumber}", threadNumber);

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using System.ComponentModel;
 using System.Diagnostics;
+using ConnectionInterface;
 
 namespace Configuration
 {

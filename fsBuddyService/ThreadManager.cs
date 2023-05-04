@@ -12,9 +12,8 @@ namespace Service
 {
     class ThreadManager
     {
-        private List<Thread> threads = new List<Thread>();
-        private List<FileSystemWatcherDisposable> fsWatchers = new List<FileSystemWatcherDisposable>();
-        private Thread mainThread = Thread.CurrentThread;
+        private List<Thread> threads = new();
+        private List<FileSystemWatcherDisposable> fsWatchers = new();
         private readonly int ThreadNumber = 1;
 
         public ThreadManager(int threadNumber)
@@ -50,11 +49,19 @@ namespace Service
                 return;
             }
 
+            Log.Information("Creating threads with {@watchers}", watchers);
+
             var threadWatcherCount = watchers.Count() / ThreadNumber;
+
+            threadWatcherCount =  threadWatcherCount == 0 ? 1 : threadWatcherCount;
 
             Log.Information("Creating threads with {threadWatcherCount} watchers", threadWatcherCount);
 
-            foreach (var watcherChunk in watchers.Chunk(threadWatcherCount))
+            List<Watcher[]> chunks = watchers.Chunk(threadWatcherCount).ToList();
+
+            Log.Information("Creating threads with chunks {@chunks}", chunks);
+
+            foreach (var watcherChunk in chunks)
             {
                 try
                 {

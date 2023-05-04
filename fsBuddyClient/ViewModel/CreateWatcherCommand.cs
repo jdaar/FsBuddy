@@ -28,6 +28,11 @@ namespace Client.ViewModel
 
         public async void Execute(object parameter)
         {
+            var watcherForm = (string)parameter;
+
+            MessageBox.Show($"Watcher {parameter}");
+            MessageBox.Show($"Watcher {watcherForm}");
+
             var request = new PipeRequest
             {
                 Command = IPipeCommand.CREATE_WATCHER,

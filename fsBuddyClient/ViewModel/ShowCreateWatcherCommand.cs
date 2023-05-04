@@ -6,20 +6,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Client.Model;
+using Client.View;
 using ConnectionInterface;
 
 namespace Client.ViewModel
 {
-    public class SwitchConnectionStatusCommand : ICommand
+    public class ShowCreateWatcherCommand : ICommand
     {
-        private readonly ServiceConnection _serviceConnection;
 
         public event EventHandler CanExecuteChanged { add { } remove { } }
 
-        public SwitchConnectionStatusCommand(ServiceConnection serviceConnection)
-        {
-            _serviceConnection = serviceConnection;
-        }
+        public ShowCreateWatcherCommand() { }
 
         public bool CanExecute(object parameter)
         {
@@ -28,14 +25,8 @@ namespace Client.ViewModel
 
         public async void Execute(object parameter)
         {
-            if (_serviceConnection.IsConnected)
-            {
-                _serviceConnection.Disconnect();
-            }
-            else
-            {
-                await _serviceConnection.Connect();
-            }
+            var createWatcherWindow = new CreateWatcher();
+            createWatcherWindow.ShowDialog();
         }
     }
 }

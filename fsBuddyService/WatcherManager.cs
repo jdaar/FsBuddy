@@ -25,6 +25,15 @@ namespace Service
             _threadManager = new ThreadManager(threadNumber);
         }
 
+        public void RefreshThreads(List<Watcher> watchers)
+        {
+            if (_threadManager == null) return;
+
+            _threadManager.StopThreads();
+            _threadManager.InitializeThreads(watchers);
+            _threadManager.Start();
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await RetrieveServiceSettings();

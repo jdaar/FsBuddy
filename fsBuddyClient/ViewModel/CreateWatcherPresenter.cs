@@ -16,40 +16,48 @@ using System.Windows;
 
 namespace Client.ViewModel
 {
-    public class Presenter : INotifyPropertyChanged
+    public class IWatcherForm {
+        public string Name { get; set; }
+    }
+
+    public class CreateWatcherPresenter : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ServiceConnection serviceConnection;
 
-        public bool IsConnected {
-            get {
-                return serviceConnection.IsConnected;
+        public ICommand CreateWatcherCommand { get; set; }
+
+        public IWatcherForm WatcherForm { get; set; } = new IWatcherForm { 
+            Name = ""
+        };
+
+        private string _watcherName = "";
+        public string WatcherName
+        {
+            get { return _watcherName; }
+            set { 
+                _watcherName = value;
+                WatcherForm.Name = value;
+                OnPropertyChanged(nameof(WatcherName)); 
             }
         }
-
-        public ICommand RefreshCommand { get; set; }
-        public ICommand SwitchConnectionStatusCommand { get; set; }
-        public ICommand ShowCreateWatcherCommand { get; set; }
 
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public Presenter()
+        public CreateWatcherPresenter()
         { 
             serviceConnection = ServiceConnection.GetInstance(
                 delegate()
                 {
                     OnPropertyChanged(nameof(serviceConnection));
-                    OnPropertyChanged(nameof(IsConnected));
                 }
             );
 
-            RefreshCommand = new RefreshCommand(serviceConnection);
-            SwitchConnectionStatusCommand = new SwitchConnectionStatusCommand(serviceConnection);
-            ShowCreateWatcherCommand = new ShowCreateWatcherCommand();
+            CreateWatcherCommand = new CreateWatcherCommand(serviceConnection);
         }
     }
 }

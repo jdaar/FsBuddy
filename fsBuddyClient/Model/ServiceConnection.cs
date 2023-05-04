@@ -9,11 +9,26 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using ConnectionInterface;
+using Microsoft.VisualBasic;
 
 namespace Client.Model
 {
     public class ServiceConnection
     {
+        private static ServiceConnection? _instance;
+
+        public static ServiceConnection GetInstance(Action onPropertyChange)
+        {
+            if (_instance == null)
+            {
+                _instance = new ServiceConnection(onPropertyChange);
+            } else
+            {
+                _instance._onPropertyChange += onPropertyChange;
+            }
+            return _instance;
+        }
+
         private NamedPipeClientStream? _client;
 
         private StreamReader? _reader;
@@ -21,31 +36,45 @@ namespace Client.Model
 
         public bool IsConnected = false;
 
-        public Action _onPropertyChange;
+        public event Action _onPropertyChange;
 
-        public ServiceConnection(Action onPropertyChange)
+        private ServiceConnection(Action onPropertyChange)
         {
-            _onPropertyChange = onPropertyChange;
+            _onPropertyChange += onPropertyChange;
 
-            Connect();
+            Task.Run(Connect);
         }
 
-        public void Connect()
+        public async Task Connect()
         {
-            _client = new NamedPipeClientStream("fsbuddy-service");
+            try
+            {
+                _client = new NamedPipeClientStream(
+                    "localhost", 
+                    "fsbuddy-service", 
+                    PipeDirection.InOut, 
+                    PipeOptions.Asynchronous,
+                    System.Security.Principal.TokenImpersonationLevel.Identification
+                    
+                );
+            } catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Pipe error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             _reader = new StreamReader(_client);
             _writer = new StreamWriter(_client);
 
-            _client.Connect();
+            await _client.ConnectAsync();
             IsConnected = true;
-            _onPropertyChange();
+            _onPropertyChange?.Invoke();
         }
         public void Disconnect()
         {
             _client?.Close();
             IsConnected = false;
-            _onPropertyChange();
+            _onPropertyChange?.Invoke();
         }
 
         ~ServiceConnection()

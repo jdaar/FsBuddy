@@ -7,7 +7,6 @@
         xmlns:ViewModel="clr-namespace:Client.ViewModel"
         mc:Ignorable="d"
 
-        WindowStyle="None"
         WindowState="Normal"
         WindowStartupLocation="CenterScreen"
 
@@ -31,7 +30,7 @@
         />
         <KeyBinding 
             Key="F11" 
-            Command="{Binding Path=CreateWatcherCommand}"
+            Command="{Binding Path=ShowCreateWatcherCommand}"
         />
     </Window.InputBindings>
 

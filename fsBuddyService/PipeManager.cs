@@ -86,9 +86,14 @@ namespace Service
 
         private async Task<PipeResponse> ProcessPipeRequest(PipeRequest pipeRequest)
         {
-            if (pipeRequest.Command == IPipeCommand.CREATE_WATCHER)
+            switch (pipeRequest.Command)
             {
-                Log.Information("Creating watcher: {@pipeRequest}", pipeRequest);
+                case IPipeCommand.CREATE_WATCHER:
+                    Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload?.WatcherData!);
+                    await _configurationManager.CreateWatcher(pipeRequest.Payload?.WatcherData!);
+                    var watchers = await _configurationManager.GetWatchers();
+                    _watcherManager.RefreshThreads(watchers);
+                    break;
             }
             return new PipeResponse
             {

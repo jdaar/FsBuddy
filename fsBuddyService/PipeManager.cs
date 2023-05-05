@@ -92,7 +92,7 @@ namespace Service
                     Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload?.WatcherData!);
                     await _configurationManager.CreateWatcher(pipeRequest.Payload?.WatcherData!);
                     var watchers = await _configurationManager.GetWatchers();
-                    _watcherManager.RefreshThreads(watchers);
+                    _watcherManager.RefreshWatchers(watchers);
                     break;
             }
             return new PipeResponse

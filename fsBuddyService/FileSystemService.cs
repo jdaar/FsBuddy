@@ -53,10 +53,10 @@ namespace Service
                 {
                     services.AddSingleton<ManagerConfiguration>();
 
+                    services.AddHostedService<PipeManager>();
+
                     services.AddSingleton<WatcherManager>();
                     services.AddHostedService(provider => provider.GetService<WatcherManager>());
-
-                    services.AddHostedService<PipeManager>();
                 });
         }
 

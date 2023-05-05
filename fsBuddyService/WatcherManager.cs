@@ -2,6 +2,7 @@ using Serilog;
 using Configuration;
 using Serilog.Context;
 using ConnectionInterface;
+using System.Linq.Expressions;
 
 namespace Service
 {
@@ -9,49 +10,97 @@ namespace Service
     class WatcherManager : BackgroundService
     {
         private readonly ManagerConfiguration _managerConfiguration;
-        private ThreadManager? _threadManager;
 
-        private int threadNumber;
+        private List<FileSystemWatcherDisposable> fsDisposables = new();
+        private List<Watcher> watchers = new();
+
+        public bool IsRefreshRequired { get; set; } = false;
 
         public WatcherManager(ManagerConfiguration managerConfiguration)
         {
             _managerConfiguration = managerConfiguration;
         }
-        private async Task RetrieveServiceSettings()
-        {
-            threadNumber = (await _managerConfiguration.GetServiceSetting(SettingType.THREAD_NUMBER))?.Value ?? 1;
-            Log.Information("Setting ThreadNumber: {threadNumber}", threadNumber);
 
-            _threadManager = new ThreadManager(threadNumber);
+        ~WatcherManager()
+        {
+            fsDisposables.ForEach(
+                delegate (FileSystemWatcherDisposable value)
+                {
+                    value.Dispose();
+                }
+            );
         }
 
-        public void RefreshThreads(List<Watcher> watchers)
+        private async Task RetrieveServiceSettings()
         {
-            if (_threadManager == null) return;
 
-            _threadManager.StopThreads();
-            _threadManager.InitializeThreads(watchers);
-            _threadManager.IsRefreshRequired = true;
+        }
+
+        private void InitFsDisposables()
+        {
+            fsDisposables = watchers.Select(
+                delegate (Watcher watcher)
+                {
+                    return new FileSystemWatcherDisposable(watcher);
+                }
+             ).ToList();
+            IsRefreshRequired = true;
+        }
+
+        private void StartFsDisposables()
+        {
+            fsDisposables.ForEach(
+                delegate (FileSystemWatcherDisposable value)
+                {
+                    if (value.fsWatcher == null)
+                    {
+                        fsDisposables.Remove(value);
+                        value.Dispose();
+                        return;
+                    }
+                    value.fsWatcher.EnableRaisingEvents = true;
+                }
+            );
+            IsRefreshRequired = false;
+        }
+
+        private void StopFsDisposables()
+        {
+            fsDisposables.ForEach(
+                delegate (FileSystemWatcherDisposable value)
+                {
+                    value.Dispose();
+                }
+            );
+            fsDisposables = new();
+        }
+
+        private void RefreshFsDisposables()
+        {
+            StopFsDisposables();
+            InitFsDisposables();
+        }
+
+        public void RefreshWatchers(List<Watcher> newWatchers)
+        {
+            watchers = newWatchers;
+            RefreshFsDisposables();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await RetrieveServiceSettings();
 
-            var watchers = await _managerConfiguration.GetWatchers();
-            RefreshThreads(watchers);
+            watchers = await _managerConfiguration.GetWatchers();
+            RefreshFsDisposables();
             
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (_threadManager == null) return;
-
-
-                if (_threadManager.IsRefreshRequired)
+                if (IsRefreshRequired)
                 {
-                    _threadManager.Start();
+                    StartFsDisposables();
                 }
             }
         }
-
     }
 }

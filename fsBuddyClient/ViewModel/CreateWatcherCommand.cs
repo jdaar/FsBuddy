@@ -38,9 +38,9 @@ namespace Client.ViewModel
                     WatcherData = new Watcher
                     {
                         Name = watcherForm.Name,
-                        InputPath = @"C:\fsBuddyTestData",
-                        OutputPath = @"C:\fsBuddyTestData",
-                        SearchPattern = "*.*",
+                        InputPath = watcherForm.InputPath,
+                        OutputPath = watcherForm.OutputPath,
+                        SearchPattern = watcherForm.Filter
                     }
                 }
             };

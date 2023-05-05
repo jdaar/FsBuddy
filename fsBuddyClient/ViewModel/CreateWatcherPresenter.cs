@@ -18,6 +18,9 @@ namespace Client.ViewModel
 {
     public class IWatcherForm {
         public string Name { get; set; }
+        public string InputPath { get; set; }
+        public string OutputPath { get; set; }
+        public string Filter { get; set; }
     }
 
     public class CreateWatcherPresenter : INotifyPropertyChanged
@@ -29,17 +32,44 @@ namespace Client.ViewModel
         public ICommand CreateWatcherCommand { get; set; }
 
         public IWatcherForm WatcherForm { get; set; } = new IWatcherForm { 
-            Name = ""
+            Name = "",
+            InputPath = "",
+            OutputPath = "",
+            Filter = ""
         };
 
-        private string _watcherName = "";
         public string WatcherName
         {
-            get { return _watcherName; }
+            get { return WatcherForm.Name; }
             set { 
-                _watcherName = value;
                 WatcherForm.Name = value;
                 OnPropertyChanged(nameof(WatcherName)); 
+            }
+        }
+        public string WatcherFilter
+        {
+            get { return WatcherForm.Filter; }
+            set { 
+                WatcherForm.Filter = value;
+                OnPropertyChanged(nameof(WatcherFilter)); 
+            }
+        }
+
+        public string WatcherInputPath 
+        {
+            get { return WatcherForm.InputPath; }
+            set { 
+                WatcherForm.InputPath = value;
+                OnPropertyChanged(nameof(WatcherInputPath)); 
+            }
+        }
+
+        public string WatcherOutputPath 
+        {
+            get { return WatcherForm.OutputPath; }
+            set { 
+                WatcherForm.OutputPath = value;
+                OnPropertyChanged(nameof(WatcherOutputPath)); 
             }
         }
 

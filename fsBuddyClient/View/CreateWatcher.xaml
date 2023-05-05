@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client.View"
         xmlns:ViewModel="clr-namespace:Client.ViewModel"
+        xmlns:Component="clr-namespace:Client.View.Components"
         mc:Ignorable="d"
         
         WindowState="Normal"
@@ -29,12 +30,24 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="{Binding WatcherName}"></TextBlock>
         <TextBox Grid.Row="1" Text="{Binding Path=WatcherName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        <Button Grid.Row="2">Test</Button>
+        <TextBlock Grid.Row="2" Text="{Binding WatcherInputPath}"></TextBlock>
+        <Component:FolderEntry Text="{Binding Path=WatcherInputPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3"/>
+        <TextBlock Grid.Row="4" Text="{Binding WatcherOutputPath}"></TextBlock>
+        <Component:FolderEntry Text="{Binding Path=WatcherOutputPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="5"/>
+        <TextBlock Grid.Row="6" Text="{Binding WatcherFilter}"></TextBlock>
+        <TextBox Grid.Row="7" Text="{Binding Path=WatcherFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Button Grid.Row="8">Test</Button>
     </Grid>
 </Window>

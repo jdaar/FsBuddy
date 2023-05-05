@@ -31,19 +31,26 @@ namespace Service
 
             _threadManager.StopThreads();
             _threadManager.InitializeThreads(watchers);
-            _threadManager.Start();
+            _threadManager.IsRefreshRequired = true;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await RetrieveServiceSettings();
-            
-            if (_threadManager == null) return;
 
             var watchers = await _managerConfiguration.GetWatchers();
+            RefreshThreads(watchers);
+            
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                if (_threadManager == null) return;
 
-            _threadManager.InitializeThreads(watchers);
-            _threadManager.Start();
+
+                if (_threadManager.IsRefreshRequired)
+                {
+                    _threadManager.Start();
+                }
+            }
         }
 
     }

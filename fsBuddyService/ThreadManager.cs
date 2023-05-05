@@ -16,6 +16,8 @@ namespace Service
         private List<FileSystemWatcherDisposable> fsWatchers = new();
         private readonly int ThreadNumber = 1;
 
+        public bool IsRefreshRequired { get; set; } = false;
+
         public ThreadManager(int threadNumber)
         {
             ThreadNumber = threadNumber;
@@ -23,11 +25,13 @@ namespace Service
 
         public void Start()
         {
+            IsRefreshRequired = false;
             foreach (var thread in threads)
             {
                 thread.Start();
             }
         }
+
         public void StopThreads()
         {
             fsWatchers.ForEach(fsWatcher => fsWatcher.Dispose());

@@ -28,10 +28,7 @@ namespace Client.ViewModel
 
         public async void Execute(object parameter)
         {
-            var watcherForm = (string)parameter;
-
-            MessageBox.Show($"Watcher {parameter}");
-            MessageBox.Show($"Watcher {watcherForm}");
+            var watcherForm = (IWatcherForm)parameter;
 
             var request = new PipeRequest
             {
@@ -40,7 +37,7 @@ namespace Client.ViewModel
                 {
                     WatcherData = new Watcher
                     {
-                        Name = "Test",
+                        Name = watcherForm.Name,
                         InputPath = @"C:\fsBuddyTestData",
                         OutputPath = @"C:\fsBuddyTestData",
                         SearchPattern = "*.*",

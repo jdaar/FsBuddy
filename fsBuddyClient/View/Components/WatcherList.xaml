@@ -70,7 +70,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListView Margin="10" Style="{StaticResource MainWrapper}" ItemsSource="{Binding Watchers}">
+        <ListView Margin="0" Style="{StaticResource MainWrapper}" ItemsSource="{Binding Watchers}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Background" Value="Transparent" />
@@ -90,7 +90,7 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="55" />
-                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="15" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0">

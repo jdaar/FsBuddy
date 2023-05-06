@@ -28,11 +28,11 @@ namespace Client.ViewModel
 
         public async void Execute(object parameter)
         {
-            var watcherForm = (IWatcherForm)parameter;
+            var watcherForm = (WatcherForm)parameter;
 
             var request = new PipeRequest
             {
-                Command = IPipeCommand.CREATE_WATCHER,
+                Command = t_PipeCommand.CREATE_WATCHER,
                 Payload = new PipeRequestPayload
                 {
                     WatcherData = new Watcher
@@ -40,7 +40,8 @@ namespace Client.ViewModel
                         Name = watcherForm.Name,
                         InputPath = watcherForm.InputPath,
                         OutputPath = watcherForm.OutputPath,
-                        SearchPattern = watcherForm.Filter
+                        SearchPattern = watcherForm.Filter,
+                        Action = t_WatcherAction.MOVE
                     }
                 }
             };

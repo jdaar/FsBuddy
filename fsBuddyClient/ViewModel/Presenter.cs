@@ -13,6 +13,7 @@ using System.IO;
 using System.Collections;
 using Microsoft.Windows.Themes;
 using System.Windows;
+using ConnectionInterface;
 
 namespace Client.ViewModel
 {
@@ -28,9 +29,23 @@ namespace Client.ViewModel
             }
         }
 
+        private List<Watcher> watchers;
+        public List<Watcher> Watchers { 
+            get
+            {
+                return watchers;
+            }
+            set 
+            {
+                watchers = value;
+                OnPropertyChanged(nameof(Watchers));
+            }
+        }
+
         public ICommand RefreshCommand { get; set; }
         public ICommand SwitchConnectionStatusCommand { get; set; }
         public ICommand ShowCreateWatcherCommand { get; set; }
+        public ICommand GetAllWatcherCommand { get; set; }
 
         public void OnPropertyChanged(string propertyName)
         {
@@ -49,6 +64,7 @@ namespace Client.ViewModel
 
             RefreshCommand = new RefreshCommand(serviceConnection);
             SwitchConnectionStatusCommand = new SwitchConnectionStatusCommand(serviceConnection);
+            GetAllWatcherCommand = new GetAllWatcherCommand(serviceConnection, this);
             ShowCreateWatcherCommand = new ShowCreateWatcherCommand();
         }
     }

@@ -121,7 +121,7 @@ namespace Client.Model
                 throw new Exception("Couldn't deserialize response");
             }
 
-            if (deserializedResponse.Status != IResponseStatus.SUCCESS)
+            if (deserializedResponse.Status != t_ResponseStatus.SUCCESS)
             {
                 MessageBox.Show($"Service error: {deserializedResponse.Payload}");
             }

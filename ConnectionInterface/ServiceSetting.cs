@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ConnectionInterface 
 {
-    public enum SettingType: int
+    public enum t_Setting: int
     {
         THREAD_NUMBER,
     }
@@ -23,7 +23,7 @@ namespace ConnectionInterface
 
         [Required]
         [Column(name: "type")]
-        public SettingType Type { get; set; }
+        public t_Setting Type { get; set; }
 
         [Required]
         [Column(name: "value")]

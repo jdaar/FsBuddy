@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace ConnectionInterface
 {
-    public enum IPipeCommand
+    public enum t_PipeCommand
     {
         GET_WATCHER = 0,
         GET_ALL_WATCHER = 1,
@@ -16,7 +16,11 @@ namespace ConnectionInterface
         UPDATE_SERVICESETTING = 8,
         DELETE_SERVICESETTING = 9,
     }
-
+    public enum t_ResponseStatus
+    {
+        SUCCESS = 0,
+        FAILURE = 1,
+    }
     public class PipeRequestPayload
     {
         public int? WatcherId { get; set; }
@@ -27,7 +31,7 @@ namespace ConnectionInterface
 
     public class PipeRequest
     {
-        public IPipeCommand Command { get; set; }
+        public t_PipeCommand Command { get; set; }
         public PipeRequestPayload? Payload { get; set; }
     } 
 
@@ -37,15 +41,9 @@ namespace ConnectionInterface
         public List<Watcher>? Watchers { get; set; }
     }
 
-    public enum IResponseStatus
-    {
-        SUCCESS = 0,
-        FAILURE = 1,
-    }
-
     public class PipeResponse
     {
-        public IResponseStatus Status { get; set; }
+        public t_ResponseStatus Status { get; set; }
         public PipeResponsePayload? Payload { get; set; }
     }
 
@@ -85,7 +83,7 @@ namespace ConnectionInterface
         {
             return new PipeResponse
             {
-                Status = IResponseStatus.FAILURE,
+                Status = t_ResponseStatus.FAILURE,
                 Payload = new PipeResponsePayload
                 {
                     ErrorMessage = error_message,

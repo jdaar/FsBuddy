@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Client.View.Components.WatcherList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.View.Components"
+             xmlns:ViewModel="clr-namespace:Client.ViewModel"
+
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+
+             d:DataContext="{d:DesignInstance ViewModel:Presenter}">
+    <Grid>
+        <ListView Margin="10" ItemsSource="{Binding Watchers}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel>
+                        <TextBlock Text="Name: " />
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                        <TextBlock Text=", " />
+                        <TextBlock Text="In: " />
+                        <TextBlock Text="{Binding InputPath}" FontWeight="Bold" />
+                        <TextBlock Text=", " />
+                        <TextBlock Text="Out: " />
+                        <TextBlock Text="{Binding OutputPath}" TextDecorations="Underline" Foreground="Blue" Cursor="Hand" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

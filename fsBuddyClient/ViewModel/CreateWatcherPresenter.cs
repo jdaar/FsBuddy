@@ -16,7 +16,7 @@ using System.Windows;
 
 namespace Client.ViewModel
 {
-    public class IWatcherForm {
+    public class WatcherForm {
         public string Name { get; set; }
         public string InputPath { get; set; }
         public string OutputPath { get; set; }
@@ -31,7 +31,7 @@ namespace Client.ViewModel
 
         public ICommand CreateWatcherCommand { get; set; }
 
-        public IWatcherForm WatcherForm { get; set; } = new IWatcherForm { 
+        public WatcherForm WatcherForm { get; set; } = new WatcherForm { 
             Name = "",
             InputPath = "",
             OutputPath = "",

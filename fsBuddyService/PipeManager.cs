@@ -86,20 +86,39 @@ namespace Service
 
         private async Task<PipeResponse> ProcessPipeRequest(PipeRequest pipeRequest)
         {
+            List<Watcher> watchers;
             switch (pipeRequest.Command)
             {
-                case IPipeCommand.CREATE_WATCHER:
+                case t_PipeCommand.CREATE_WATCHER:
                     Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload?.WatcherData!);
                     await _configurationManager.CreateWatcher(pipeRequest.Payload?.WatcherData!);
-                    var watchers = await _configurationManager.GetWatchers();
+                    watchers = await _configurationManager.GetWatchers();
                     _watcherManager.RefreshWatchers(watchers);
-                    break;
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload { }
+                    };
+                case t_PipeCommand.GET_ALL_WATCHER:
+                    Log.Information("Getting all watchers");
+                    watchers = await _configurationManager.GetWatchers();
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload { 
+                            Watchers = watchers
+                        }
+                    };
+                default:
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.FAILURE,
+                        Payload = new PipeResponsePayload
+                        {
+                            ErrorMessage = "Command not defined"
+                        }
+                    };
             }
-            return new PipeResponse
-            {
-                Status = IResponseStatus.SUCCESS,
-                Payload = new PipeResponsePayload { }
-            };
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

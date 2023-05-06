@@ -46,6 +46,10 @@ namespace Configuration
             {
                 return;
             }
+            if (!Directory.Exists(watcher.InputPath) || !Directory.Exists(watcher.OutputPath))
+            {
+                return;
+            }
 
             await _context.Watchers.AddAsync(watcher);
             await _context.SaveChangesAsync();
@@ -55,7 +59,7 @@ namespace Configuration
         {
             return await _context.Watchers.ToListAsync();
         }
-        public async Task<ServiceSetting?> GetServiceSetting(SettingType type)
+        public async Task<ServiceSetting?> GetServiceSetting(t_Setting type)
         {
             return await _context.SystemSettings.Where(setting => setting.Type == type).FirstOrDefaultAsync();
         }
@@ -67,7 +71,7 @@ namespace Configuration
 
         public async Task CreateDefaultServiceSettings()
         {
-            var ThreadNumberSetting = new ServiceSetting { Type = SettingType.THREAD_NUMBER , Value = 2 };
+            var ThreadNumberSetting = new ServiceSetting { Type = t_Setting.THREAD_NUMBER , Value = 2 };
             await _context.SystemSettings.AddAsync(ThreadNumberSetting);
             await _context.SaveChangesAsync();
         }

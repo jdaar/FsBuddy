@@ -25,6 +25,10 @@
             Command="{Binding Path=RefreshCommand}"
         />
         <KeyBinding 
+            Key="F6" 
+            Command="{Binding Path=GetAllWatcherCommand}"
+        />
+        <KeyBinding 
             Key="F10" 
             Command="{Binding Path=SwitchConnectionStatusCommand}"
         />
@@ -55,8 +59,10 @@
     <Grid Background="{StaticResource AppBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Component:Navbar Grid.Row="0"/>
+        <Component:WatcherList Grid.Row="1"/>
     </Grid>
 </Window>

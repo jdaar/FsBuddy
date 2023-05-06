@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace ConnectionInterface 
 {
+    public enum t_WatcherAction: int
+    {
+        MOVE,
+        RENAME,
+        DELETE
+    }
+
     [Table(name: "watchers")]
     public class Watcher
     {
@@ -40,5 +47,10 @@ namespace ConnectionInterface
         [StringLength(256)]
         [Column(name: "output_path")]
         public string? OutputPath { get; set; }
+
+        [Required]
+        [Column(name: "action")]
+        public  t_WatcherAction Action { get; set; }
+
     }
 }

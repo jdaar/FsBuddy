@@ -45,7 +45,7 @@
 
         <Style x:Key="CardMainTitle"  TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="{DynamicResource Title}" />
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontSize" Value="30" />
             <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -58,6 +58,14 @@
             <Setter Property="Fill" Value="{DynamicResource Success}"/>
             <Setter Property="Width" Value="10"/>
             <Setter Property="Height" Value="10"/>
+        </Style>
+
+        <Style x:Key="ButtonWrapper" TargetType="{x:Type Border}">
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="Background" Value="{DynamicResource AccentBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
         </Style>
     </UserControl.Resources>
 
@@ -81,14 +89,14 @@
                         <Border Style="{StaticResource WatcherWrapper}" Padding="15">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="35" />
-                                    <RowDefinition Height="10" />
+                                    <RowDefinition Height="55" />
+                                    <RowDefinition Height="20" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="35" />
-                                        <ColumnDefinition MaxWidth="300" />
+                                        <ColumnDefinition MaxWidth="500" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     
@@ -99,7 +107,67 @@
                                         <Ellipse Grid.Column="0" Style="{StaticResource StatusCircle}" />
                                     </Grid>
                                     <TextBlock Style="{StaticResource CardMainTitle}" Grid.Column="1" Text="{Binding Name}"/>
-                                    <Grid Grid.Column="2"></Grid>
+
+                                    <Border Grid.Column="2"  Padding="5">
+                                        <Grid HorizontalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="60" />
+                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="60" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button Grid.Column="1">
+                                                <Button.Template>
+                                                        <ControlTemplate>
+                                                            <Border Style="{StaticResource ButtonWrapper}" Grid.Column="1">
+                                                                <Border Padding="5">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <Image HorizontalAlignment="Center" Grid.Column="0">
+                                                                            <Image.Source>
+                                                                                <BitmapImage 
+                                                                                    UriSource="pack://application:,,,/Assets/Icons/pause.png"
+                                                                                    DecodePixelHeight="100" DecodePixelWidth="80">
+                                                                                </BitmapImage>
+                                                                            </Image.Source>
+                                                                        </Image>
+                                                                    </Grid>
+                                                                </Border>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+
+                                            <Button Grid.Column="3" >
+                                                <Button.Template>
+                                                        <ControlTemplate TargetType="{x:Type Button}">
+                                                            <Border Style="{StaticResource ButtonWrapper}" Grid.Column="3" >
+                                                                <Border Padding="5">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                            </Grid.ColumnDefinitions>
+
+                                                                            <Image HorizontalAlignment="Center" Grid.Column="0">
+                                                                                <Image.Source>
+                                                                                    <BitmapImage 
+                                                                                        UriSource="pack://application:,,,/Assets/Icons/edit.png"
+                                                                                        DecodePixelHeight="100" DecodePixelWidth="90">
+                                                                                    </BitmapImage>
+                                                                                </Image.Source>
+                                                                            </Image>
+                                                                        </Grid>
+                                                                </Border>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </Grid>
+                                    </Border>
                                 </Grid>
                                 <Grid Grid.Row="2">
                                     <Grid.ColumnDefinitions>

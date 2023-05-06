@@ -12,7 +12,7 @@
 
         Title="FsBuddy" 
         Height="800" Width="950"
-        MinHeight="400" MinWidth="950"
+        MinHeight="400" MinWidth="800"
         >
 
     <Window.DataContext>

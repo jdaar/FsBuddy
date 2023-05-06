@@ -10,7 +10,9 @@
   <ItemGroup>
     <None Remove="Assets\font.ttf" />
     <None Remove="Assets\Icons\create.png" />
+    <None Remove="Assets\Icons\edit.png" />
     <None Remove="Assets\Icons\logs.png" />
+    <None Remove="Assets\Icons\pause.png" />
     <None Remove="Assets\Icons\shrink.png" />
     <None Remove="Assets\logo_black.jpg" />
     <None Remove="Assets\logo_black.svg" />
@@ -31,7 +33,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\Icons\create.png" />
+    <Resource Include="Assets\Icons\edit.png" />
     <Resource Include="Assets\Icons\logs.png" />
+    <Resource Include="Assets\Icons\pause.png" />
     <Resource Include="Assets\Icons\shrink.png" />
     <Resource Include="Assets\logo_black.jpg" />
     <Resource Include="Assets\logo_black.svg" />

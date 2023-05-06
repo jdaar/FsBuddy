@@ -31,17 +31,28 @@
             <Setter Property="Foreground" Value="{DynamicResource AccentForeground}" />
             <Setter Property="FontSize" Value="20" />
             <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
-            <Setter Property="FontWeight" Value="Regular" />
+            <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Text" Value="Inactive" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Text" Value="Active" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="BadgeStatus" TargetType="{x:Type Ellipse}">
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Fill" Value="{DynamicResource Success}"/>
             <Setter Property="Width" Value="10"/>
             <Setter Property="Height" Value="10"/>
+            <Setter Property="Fill" Value="{DynamicResource Error}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Fill" Value="{DynamicResource Success}"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
         
         <Style x:Key="WatcherCounter" TargetType="{x:Type TextBlock}">
@@ -87,12 +98,12 @@
                     <Border Padding="10">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="350" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>   
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="160" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>   
 
@@ -116,17 +127,21 @@
                                                 />
                                             </Grid>
                                             <TextBlock 
-                                                Text="{Binding IsConnected}"
                                                 Grid.Column="1"
                                                 Style="{StaticResource BadgeLabel}"
                                                 >
-                                            </TextBlock>
+                                        </TextBlock>
                                         </Grid>
                                     </Border>
 
                                     <Border Padding="20" Grid.Column="1">
-                                    <TextBlock Style="{StaticResource WatcherCounter}">
-                                            8 watchers
+                                    <TextBlock 
+                                        Style="{StaticResource WatcherCounter}">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} watchers">
+                                                    <Binding Path="WatcherCount" />
+                                                </MultiBinding>   
+                                            </TextBlock.Text>
                                         </TextBlock>
                                     </Border>
                                 </Grid>
@@ -140,81 +155,80 @@
                                         <ColumnDefinition Width="60" />
                                     </Grid.ColumnDefinitions>
 
-                            <Button Grid.Column="1" Command="{Binding RefreshCommand}">
-                                    <Button.Template>
-                                        <ControlTemplate>
-                                            <Border Style="{StaticResource AccentWrapper}" Grid.Column="1">
-                                                <Border Padding="2">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="1" Command="{Binding ShowCreateWatcherCommand}">
+                                            <Button.Template>
+                                                <ControlTemplate>
+                                                    <Border Style="{StaticResource AccentWrapper}" Grid.Column="1">
+                                                        <Border Padding="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
 
-                                                        <Image HorizontalAlignment="Center" Grid.Column="0">
-                                                            <Image.Source>
-                                                                <BitmapImage 
-                                                                    UriSource="pack://application:,,,/Assets/Icons/create.png"
-                                                                    DecodePixelHeight="100" DecodePixelWidth="80">
-                                                                </BitmapImage>
-                                                            </Image.Source>
-                                                        </Image>
-                                                    </Grid>
-                                                </Border>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                                                                <Image HorizontalAlignment="Center" Grid.Column="0">
+                                                                    <Image.Source>
+                                                                        <BitmapImage 
+                                                                            UriSource="pack://application:,,,/Assets/Icons/create.png"
+                                                                            DecodePixelHeight="100" DecodePixelWidth="80">
+                                                                        </BitmapImage>
+                                                                    </Image.Source>
+                                                                </Image>
+                                                            </Grid>
+                                                        </Border>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
 
-                                <Button Grid.Column="3" Command="{Binding RefreshCommand}">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="{x:Type Button}">
-                                            <Border Style="{StaticResource AccentWrapper}" Grid.Column="3" >
-                                                <Border Padding="2">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="3" Command="{Binding RefreshCommand}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Style="{StaticResource AccentWrapper}" Grid.Column="3" >
+                                                        <Border Padding="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
 
-                                                        <Image HorizontalAlignment="Center" Grid.Column="0">
-                                                            <Image.Source>
-                                                                <BitmapImage 
-                                                                    UriSource="pack://application:,,,/Assets/Icons/logs.png"
-                                                                    DecodePixelHeight="100" DecodePixelWidth="90">
-                                                                </BitmapImage>
-                                                            </Image.Source>
-                                                        </Image>
-                                                    </Grid>
-                                                </Border>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                                                                <Image HorizontalAlignment="Center" Grid.Column="0">
+                                                                    <Image.Source>
+                                                                        <BitmapImage 
+                                                                            UriSource="pack://application:,,,/Assets/Icons/logs.png"
+                                                                            DecodePixelHeight="100" DecodePixelWidth="90">
+                                                                        </BitmapImage>
+                                                                    </Image.Source>
+                                                                </Image>
+                                                            </Grid>
+                                                        </Border>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
 
-                                <Button Grid.Column="5" Command="{Binding RefreshCommand}">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="{x:Type Button}">
-                                            <Border Style="{StaticResource AccentWrapper}" Grid.Column="5">
-                                                <Border Padding="2">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*"/>
-                                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="5" Command="{Binding RefreshCommand}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Style="{StaticResource AccentWrapper}" Grid.Column="5">
+                                                        <Border Padding="5">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
 
-                                                        <Image HorizontalAlignment="Center" Grid.Column="0">
-                                                        <Image.Source>
-                                                                <BitmapImage 
-                                                                    UriSource="pack://application:,,,/Assets/Icons/shrink.png"
-                                                                    DecodePixelHeight="100" DecodePixelWidth="100">
-                                                                </BitmapImage>
-                                                            </Image.Source>
-                                                        </Image>
-                                                    </Grid>
-                                                </Border>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-
+                                                                <Image HorizontalAlignment="Center" Grid.Column="0">
+                                                                <Image.Source>
+                                                                        <BitmapImage 
+                                                                            UriSource="pack://application:,,,/Assets/Icons/shrink.png"
+                                                                            DecodePixelHeight="100" DecodePixelWidth="100">
+                                                                        </BitmapImage>
+                                                                    </Image.Source>
+                                                                </Image>
+                                                            </Grid>
+                                                        </Border>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                 </Grid>
                             </Grid>
                         </Border>

@@ -19,6 +19,7 @@ namespace Service
         private Watcher _watcher;
 
         private static Dictionary<t_WatcherAction, Action<Watcher, FileSystemEventArgs>> WatcherActions = new();
+        private static bool IsWatcherActionsInitialized { get; set; } = false;
 
         public FileSystemWatcher? fsWatcher;
 
@@ -62,11 +63,12 @@ namespace Service
                     }
                 }
             );
+            IsWatcherActionsInitialized = true;
         }
 
         public FileSystemWatcherDisposable(Watcher watcher)
         {
-            if (WatcherActions.Count() == 0)
+            if (!IsWatcherActionsInitialized)
             {
                 PopulateWatcherActions();
             }
@@ -91,13 +93,13 @@ namespace Service
                     }
 
                     fsWatcher.NotifyFilter = NotifyFilters.Attributes
-                                         | NotifyFilters.CreationTime
-                                         | NotifyFilters.DirectoryName
-                                         | NotifyFilters.FileName
-                                         | NotifyFilters.LastAccess
-                                         | NotifyFilters.LastWrite
-                                         | NotifyFilters.Security
-                                         | NotifyFilters.Size;
+                                             | NotifyFilters.CreationTime
+                                             | NotifyFilters.DirectoryName
+                                             | NotifyFilters.FileName
+                                             | NotifyFilters.LastAccess
+                                             | NotifyFilters.LastWrite
+                                             | NotifyFilters.Security
+                                             | NotifyFilters.Size;
 
                     fsWatcher.Created += Created;
                     fsWatcher.Renamed += Renamed;

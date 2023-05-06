@@ -11,8 +11,8 @@
         WindowStartupLocation="CenterScreen"
 
         Title="FsBuddy" 
-        Height="800" Width="700"
-        MinHeight="400" MinWidth="700"
+        Height="800" Width="950"
+        MinHeight="400" MinWidth="950"
         >
 
     <Window.DataContext>
@@ -45,20 +45,20 @@
 
         <SolidColorBrush x:Key="AppBackground">#000000</SolidColorBrush>
         <SolidColorBrush x:Key="MainBackground">#00171F</SolidColorBrush>
-        <SolidColorBrush x:Key="MainForeground">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="MainForeground">#00A8E8</SolidColorBrush>
         <SolidColorBrush x:Key="MainBorder">#003459</SolidColorBrush>
         <SolidColorBrush x:Key="AccentBackground">#003459</SolidColorBrush>
-        <SolidColorBrush x:Key="AccentForeground">#FFFFFF</SolidColorBrush>
-        <SolidColorBrush x:Key="AccentBorder">#007EA7</SolidColorBrush>
-        <SolidColorBrush x:Key="Title">#000000</SolidColorBrush>
-        <SolidColorBrush x:Key="Subtitle">#000000</SolidColorBrush>
-        <SolidColorBrush x:Key="Error">#000000</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentForeground">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentBorder">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="Title">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="Subtitle">#007EA7</SolidColorBrush>
+        <SolidColorBrush x:Key="Error">#E80000</SolidColorBrush>
         <SolidColorBrush x:Key="Success">#20E800</SolidColorBrush>
     </Window.Resources>
 
     <Grid Background="{StaticResource AppBackground}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 

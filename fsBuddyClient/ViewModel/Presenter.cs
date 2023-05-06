@@ -29,16 +29,17 @@ namespace Client.ViewModel
             }
         }
 
-        private List<Watcher> watchers;
         public List<Watcher> Watchers { 
             get
             {
-                return watchers;
+                return serviceConnection.Watchers;
             }
-            set 
+        }
+
+        public int WatcherCount { 
+            get
             {
-                watchers = value;
-                OnPropertyChanged(nameof(Watchers));
+                return serviceConnection.Watchers.Count;
             }
         }
 
@@ -58,7 +59,10 @@ namespace Client.ViewModel
                 delegate()
                 {
                     OnPropertyChanged(nameof(serviceConnection));
+
                     OnPropertyChanged(nameof(IsConnected));
+                    OnPropertyChanged(nameof(Watchers));
+                    OnPropertyChanged(nameof(WatcherCount));
                 }
             );
 

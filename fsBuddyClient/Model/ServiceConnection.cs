@@ -36,6 +36,19 @@ namespace Client.Model
 
         public bool IsConnected = false;
 
+        private List<Watcher> watchers = new();
+        public List<Watcher> Watchers { 
+            get
+            {
+                return watchers;
+            }
+            set 
+            {
+                watchers = value;
+                _onPropertyChange?.Invoke();
+            }
+        }
+
         public event Action _onPropertyChange;
 
         private ServiceConnection(Action onPropertyChange)
@@ -68,12 +81,16 @@ namespace Client.Model
 
             await _client.ConnectAsync();
             IsConnected = true;
+
+            await RefreshWatchers();
+
             _onPropertyChange?.Invoke();
         }
         public void Disconnect()
         {
             _client?.Close();
             IsConnected = false;
+            Watchers = new();
             _onPropertyChange?.Invoke();
         }
 
@@ -83,6 +100,31 @@ namespace Client.Model
             _client?.Dispose();
             _reader?.Dispose();
             _writer?.Dispose();
+        }
+
+        public async Task RefreshWatchers()
+        {
+            var request = new PipeRequest
+            {
+                Command = t_PipeCommand.GET_ALL_WATCHER,
+                Payload = new PipeRequestPayload { }
+            };
+
+           var response = await SendPipeRequest(request);
+
+            if (response == null)
+            {
+                MessageBox.Show("Couldn't retrieve service response", "Pipe error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (response?.Payload?.Watchers == null)
+            {
+                MessageBox.Show("Couldn't retrieve watchers", "Pipe error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            Watchers = response.Payload.Watchers;
         }
 
         public async Task<PipeResponse?> SendPipeRequest(PipeRequest request)

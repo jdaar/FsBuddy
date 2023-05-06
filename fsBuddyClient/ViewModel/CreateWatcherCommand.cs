@@ -54,6 +54,8 @@ namespace Client.ViewModel
                 return;
             }
 
+            await _serviceConnection.RefreshWatchers();
+
             MessageBox.Show($"Status: {response?.Status}");
         }
     }

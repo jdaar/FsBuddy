@@ -11,7 +11,7 @@ namespace Service
     {
         private readonly ManagerConfiguration _managerConfiguration;
 
-        private List<FileSystemWatcherDisposable> fsDisposables = new();
+        private Dictionary<int, FileSystemWatcherDisposable> fsDisposables = new();
         private List<Watcher> watchers = new();
 
         public bool IsRefreshRequired { get; set; } = false;
@@ -23,12 +23,10 @@ namespace Service
 
         ~WatcherManager()
         {
-            fsDisposables.ForEach(
-                delegate (FileSystemWatcherDisposable value)
-                {
-                    value.Dispose();
-                }
-            );
+            foreach (var keyValuePair in fsDisposables)
+            {
+                keyValuePair.Value.Dispose();
+            }
         }
 
         private async Task RetrieveServiceSettings()
@@ -41,37 +39,63 @@ namespace Service
             fsDisposables = watchers.Select(
                 delegate (Watcher watcher)
                 {
-                    return new FileSystemWatcherDisposable(watcher);
+                    return new KeyValuePair<int, FileSystemWatcherDisposable>(watcher.Id, new FileSystemWatcherDisposable(watcher, _managerConfiguration.RegisterExecution));
                 }
-             ).ToList();
+             ).ToDictionary(x => x.Key, x => x.Value);
             IsRefreshRequired = true;
+        }
+
+        public bool IsFsDisposableRunning(int watcherId)
+        {
+            return fsDisposables.ContainsKey(watcherId);
+        }
+
+        public void StopFsDisposable(int watcherId)
+        {
+            fsDisposables.GetValueOrDefault(watcherId)?.Dispose();
+            fsDisposables.Remove(watcherId);
+        }
+        public async Task StartFsDisposable(int watcherId)
+        {
+            if (fsDisposables.GetValueOrDefault(watcherId) != null)
+            {
+                return; 
+            }
+
+            var watcher = await _managerConfiguration.GetWatcher(watcherId);
+
+            if (watcher == null)
+            {
+                return;
+            }
+
+            fsDisposables.Add(
+                watcher.Id,
+                new FileSystemWatcherDisposable(watcher, _managerConfiguration.RegisterExecution)
+            );
         }
 
         private void StartFsDisposables()
         {
-            fsDisposables.ForEach(
-                delegate (FileSystemWatcherDisposable value)
+            foreach (var keyValuePair in fsDisposables)
+            {
+                if (keyValuePair.Value.fsWatcher == null)
                 {
-                    if (value.fsWatcher == null)
-                    {
-                        fsDisposables.Remove(value);
-                        value.Dispose();
-                        return;
-                    }
-                    value.fsWatcher.EnableRaisingEvents = true;
+                    fsDisposables.Remove(keyValuePair.Key);
+                    keyValuePair.Value.Dispose();
+                    return;
                 }
-            );
+                keyValuePair.Value.fsWatcher.EnableRaisingEvents = true;
+            }
             IsRefreshRequired = false;
         }
 
         private void StopFsDisposables()
         {
-            fsDisposables.ForEach(
-                delegate (FileSystemWatcherDisposable value)
-                {
-                    value.Dispose();
-                }
-            );
+            foreach (var keyValuePair in fsDisposables)
+            {
+                keyValuePair.Value.Dispose();
+            }
             fsDisposables = new();
         }
 

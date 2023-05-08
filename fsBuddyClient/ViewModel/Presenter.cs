@@ -51,6 +51,11 @@ namespace Client.ViewModel
 
         public void OnPropertyChanged(string propertyName)
         {
+            if (propertyName == nameof(Watchers))
+            {
+                // Todo
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

@@ -3,18 +3,21 @@ using System.Text.Json;
 
 namespace ConnectionInterface
 {
-    public enum t_PipeCommand
+    public enum t_PipeCommand : int
     {
         GET_WATCHER = 0,
         GET_ALL_WATCHER = 1,
         CREATE_WATCHER = 2,
         UPDATE_WATCHER = 3,
         DELETE_WATCHER = 4,
-        GET_SERVICESETTING = 5,
-        GET_ALL_SERVICESETTING = 6,
-        CREATE_SERVICESETTING = 7,
-        UPDATE_SERVICESETTING = 8,
-        DELETE_SERVICESETTING = 9,
+        PAUSE_WATCHER = 5,
+        START_WATCHER = 6,
+        GET_SERVICESETTING = 7,
+        GET_ALL_SERVICESETTING = 8,
+        CREATE_SERVICESETTING = 9,
+        UPDATE_SERVICESETTING = 10,
+        DELETE_SERVICESETTING = 11,
+        GET_WATCHER_STATUS = 12,
     }
     public enum t_ResponseStatus
     {
@@ -39,6 +42,7 @@ namespace ConnectionInterface
     {
         public string? ErrorMessage { get; set; }
         public List<Watcher>? Watchers { get; set; }
+        public bool? WatcherStatus { get; set; }
     }
 
     public class PipeResponse

@@ -37,6 +37,14 @@ namespace ConnectionInterface
         [Column(name: "created_at")]
         public DateTime CreatedAt { get; set; }
 
+        [Required]
+        [Column(name: "executed_at")]
+        public DateTime ExecutedAt { get; set; }
+
+        [Required]
+        [Column(name: "modified_files")]
+        public int ModifiedFiles { get; set; }
+
 
         [Required]
         [StringLength(256)]

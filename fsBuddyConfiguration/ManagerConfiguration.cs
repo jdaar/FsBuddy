@@ -10,6 +10,7 @@ using Microsoft.Data.Sqlite;
 using System.ComponentModel;
 using System.Diagnostics;
 using ConnectionInterface;
+using System.Runtime.CompilerServices;
 
 namespace Configuration
 {
@@ -77,6 +78,20 @@ namespace Configuration
             watcher.OutputPath = watcherData.OutputPath;
             watcher.SearchPattern = watcherData.SearchPattern;
             watcher.Action = watcherData.Action;
+
+            await _context.SaveChangesAsync(CancellationToken.None);
+        }
+
+        public async Task RegisterExecution(int watcherId)
+        {
+            var now = DateTime.UtcNow;
+            var watcher = await _context.Watchers.SingleOrDefaultAsync(watcher => watcher.Id == watcherId);
+            if (watcher == null)
+            {
+                return;
+            }
+            watcher.ExecutedAt = now;
+            watcher.ModifiedFiles = watcher.ModifiedFiles + 1;
 
             await _context.SaveChangesAsync(CancellationToken.None);
         }

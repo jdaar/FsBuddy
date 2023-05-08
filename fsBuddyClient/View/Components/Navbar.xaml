@@ -187,7 +187,7 @@
                                             </Button.Template>
                                         </Button>
 
-                                        <Button Grid.Column="3" Command="{Binding RefreshCommand}">
+                                        <Button Grid.Column="3" Command="{Binding SwitchConnectionStatusCommand}">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="{x:Type Button}">
                                                     <Border Style="{StaticResource ButtonWrapper}" Grid.Column="3" >
@@ -200,7 +200,7 @@
                                                                 <Image HorizontalAlignment="Center" Grid.Column="0">
                                                                     <Image.Source>
                                                                         <BitmapImage 
-                                                                            UriSource="pack://application:,,,/Assets/Icons/logs.png"
+                                                                            UriSource="pack://application:,,,/Assets/Icons/power.png"
                                                                             DecodePixelHeight="100" DecodePixelWidth="90">
                                                                         </BitmapImage>
                                                                     </Image.Source>

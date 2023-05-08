@@ -23,8 +23,6 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Install dependencies
         run: dotnet restore
-      - name: Install tool dependencies
-        run: dotnet tool restore
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Test

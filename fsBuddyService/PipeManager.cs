@@ -165,6 +165,49 @@ namespace Service
                             Watchers = watchers
                         }
                     };
+                case t_PipeCommand.PAUSE_WATCHER:
+                    if (pipeRequest?.Payload?.WatcherId == null)
+                    {
+                        return new PipeResponse
+                        {
+                            Status = t_ResponseStatus.FAILURE,
+                            Payload = new PipeResponsePayload {
+                                ErrorMessage = "Watcher id not defined"
+                            }
+                        };
+                    }
+
+                    _watcherManager.StopFsDisposable(pipeRequest.Payload.WatcherId ?? -1);
+
+                    Log.Information("Stopping watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload { 
+                        }
+                    };
+                case t_PipeCommand.GET_WATCHER_STATUS:
+                    if (pipeRequest?.Payload?.WatcherId == null)
+                    {
+                        return new PipeResponse
+                        {
+                            Status = t_ResponseStatus.FAILURE,
+                            Payload = new PipeResponsePayload {
+                                ErrorMessage = "Watcher id not defined"
+                            }
+                        };
+                    }
+
+                    var isWatcherRunning = _watcherManager.IsFsDisposableRunning(pipeRequest.Payload.WatcherId ?? -1);
+
+                    Log.Information("Stopping watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload { 
+                            WatcherStatus = isWatcherRunning
+                        }
+                    };
                 default:
                     return new PipeResponse
                     {

@@ -17,15 +17,19 @@ namespace Service
         private Watcher _watcher;
 
         private static Dictionary<t_WatcherAction, Action<Watcher, FileSystemEventArgs>> WatcherActions = new();
+
+        private static Func<int, Task>? RegisterExecutionCallback;
         private static bool IsWatcherActionsInitialized { get; set; } = false;
 
         public FileSystemWatcher? fsWatcher;
+
 
         private void PopulateWatcherActions() {
             WatcherActions.Add(
                 t_WatcherAction.MOVE, 
                 delegate (Watcher watcher, FileSystemEventArgs fsEvent)
                 {
+                    RegisterExecutionCallback?.Invoke(watcher.Id);
                     Log.Information("From watcher action {@watcher} and event {@fsEvent}", watcher, fsEvent);
 
                     if (watcher.OutputPath == null)
@@ -88,12 +92,14 @@ namespace Service
             IsWatcherActionsInitialized = true;
         }
 
-        public FileSystemWatcherDisposable(Watcher watcher)
+        public FileSystemWatcherDisposable(Watcher watcher, Func<int, Task> registerExecutionCallback)
         {
             if (!IsWatcherActionsInitialized)
             {
                 PopulateWatcherActions();
             }
+
+            RegisterExecutionCallback = registerExecutionCallback;
 
             _watcher = watcher;
             using (LogContext.PushProperty("WatcherId", _watcher.Id))

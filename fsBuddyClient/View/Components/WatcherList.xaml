@@ -194,8 +194,8 @@
                                     <TextBlock Style="{StaticResource CardTitle}" Grid.Row="2" Grid.Column="0"  Text="Modified files"/>
                                     <TextBlock Style="{StaticResource CardTitle}" Grid.Row="4" Grid.Column="0"  Text="Search pattern"/>
 
-                                    <TextBlock Style="{StaticResource CardParagraph}" Grid.Row="0" Grid.Column="2"  Text="Placeholder"/>
-                                    <TextBlock Style="{StaticResource CardParagraph}"  Grid.Row="2" Grid.Column="2"  Text="Placeholder" />
+                                    <TextBlock Style="{StaticResource CardParagraph}" Grid.Row="0" Grid.Column="2"  Text="{Binding ExecutedAt}"/>
+                                    <TextBlock Style="{StaticResource CardParagraph}"  Grid.Row="2" Grid.Column="2"  Text="{Binding ModifiedFiles}" />
                                     <TextBlock Style="{StaticResource CardParagraph}"  Grid.Row="4" Grid.Column="2" Text="{Binding SearchPattern}" />
 
                                     <TextBlock Style="{StaticResource CardTitle}" Grid.Row="0" Grid.Column="4"  Text="Creation date"/>

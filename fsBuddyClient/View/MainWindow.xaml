@@ -21,10 +21,6 @@
 
     <Window.InputBindings>
         <KeyBinding 
-            Key="F5" 
-            Command="{Binding Path=RefreshCommand}"
-        />
-        <KeyBinding 
             Key="F6" 
             Command="{Binding Path=GetAllWatcherCommand}"
         />

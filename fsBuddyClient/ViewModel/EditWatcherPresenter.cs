@@ -13,34 +13,38 @@ using System.IO;
 using System.Collections;
 using Microsoft.Windows.Themes;
 using System.Windows;
+using ConnectionInterface;
 
 namespace Client.ViewModel
 {
-    public class t_WatcherForm {
-        public string? Name { get; set; }
-        public string? InputPath { get; set; }
-        public string? OutputPath { get; set; }
-        public string? Filter { get; set; }
-    }
-    public class t_InputFile {
-            public string? Name { get; set; }
-            public bool? IsIncluded { get; set; }
-    };
-
-    public class CreateWatcherPresenter : INotifyPropertyChanged
+    public class EditWatcherPresenter : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ServiceConnection serviceConnection;
 
-        public ICommand CreateWatcherCommand { get; set; }
+        public ICommand EditWatcherCommand { get; set; }
 
-        public t_WatcherForm WatcherForm { get; set; } = new t_WatcherForm { 
+        public int WatcherId { get; set; }
+
+        public t_WatcherForm watcherForm = new t_WatcherForm { 
             Name = "",
             InputPath = "",
             OutputPath = "",
             Filter = ""
         };
+        public t_WatcherForm WatcherForm { 
+            get { return watcherForm; } 
+            set {
+                watcherForm = value;
+                OnPropertyChanged(nameof(WatcherForm));
+                OnPropertyChanged(nameof(WatcherName)); 
+                OnPropertyChanged(nameof(WatcherFilter)); 
+                OnPropertyChanged(nameof(WatcherInputPath)); 
+                OnPropertyChanged(nameof(WatcherOutputPath)); 
+                OnPropertyChanged(nameof(WatcherInputPathItems)); 
+            } 
+        }
 
         public string WatcherName
         {
@@ -132,7 +136,36 @@ namespace Client.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public CreateWatcherPresenter()
+        private async Task PopulateWatcherForm()
+        {
+            var request = new PipeRequest
+            {
+                Command = t_PipeCommand.GET_WATCHER,
+                Payload = new PipeRequestPayload
+                {
+                    WatcherId = WatcherId
+                }
+            };
+
+            var response = await serviceConnection.SendPipeRequest(request);
+
+            var watcher = response?.Payload?.Watchers?.First();
+
+            if (watcher == null)
+            {
+                return;
+            }
+
+            WatcherForm = new t_WatcherForm
+            {
+                Name = watcher.Name,
+                InputPath = watcher.InputPath,
+                OutputPath = watcher.OutputPath,
+                Filter = watcher.SearchPattern
+            };
+        }
+
+        public EditWatcherPresenter(int watcherId)
         { 
             serviceConnection = ServiceConnection.GetInstance(
                 delegate()
@@ -141,7 +174,9 @@ namespace Client.ViewModel
                 }
             );
 
-            CreateWatcherCommand = new CreateWatcherCommand(serviceConnection);
+            WatcherId = watcherId;
+            EditWatcherCommand = new CreateWatcherCommand(serviceConnection);
+            Task.Run(PopulateWatcherForm);
         }
     }
 }

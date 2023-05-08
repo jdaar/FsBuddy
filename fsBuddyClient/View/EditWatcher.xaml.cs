@@ -11,18 +11,22 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Client.ViewModel;
+using ConnectionInterface;
 
 namespace Client.View
 {
     /// <summary>
     /// Interaction logic for CreateWatcher.xaml
     /// </summary>
-    public partial class CreateWatcher : Window
+    public partial class EditWatcher : Window
     {
-        public CreateWatcher()
+        public EditWatcher(int watcherId)
         {
             InitializeComponent();
+            DataContext = new EditWatcherPresenter(watcherId);
         }
+
         private void CloseWindow(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
             this.Close();

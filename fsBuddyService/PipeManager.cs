@@ -90,10 +90,22 @@ namespace Service
             switch (pipeRequest.Command)
             {
                 case t_PipeCommand.CREATE_WATCHER:
-                    Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload?.WatcherData!);
-                    await _configurationManager.CreateWatcher(pipeRequest.Payload?.WatcherData!);
+                    if (pipeRequest?.Payload?.WatcherData == null)
+                    {
+                        return new PipeResponse
+                        {
+                            Status = t_ResponseStatus.FAILURE,
+                            Payload = new PipeResponsePayload {
+                                ErrorMessage = "Watcher data not defined"
+                            }
+                        };
+                    }
+                    Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload.WatcherData);
+
+                    await _configurationManager.CreateWatcher(pipeRequest.Payload.WatcherData);
                     watchers = await _configurationManager.GetWatchers();
                     _watcherManager.RefreshWatchers(watchers);
+
                     return new PipeResponse
                     {
                         Status = t_ResponseStatus.SUCCESS,
@@ -102,6 +114,30 @@ namespace Service
                 case t_PipeCommand.GET_ALL_WATCHER:
                     Log.Information("Getting all watchers");
                     watchers = await _configurationManager.GetWatchers();
+
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload {
+                            Watchers = watchers
+                        }
+                    };
+                case t_PipeCommand.GET_WATCHER:
+                    if (pipeRequest?.Payload?.WatcherId == null)
+                    {
+                        return new PipeResponse
+                        {
+                            Status = t_ResponseStatus.FAILURE,
+                            Payload = new PipeResponsePayload {
+                                ErrorMessage = "Watcher id not defined"
+                            }
+                        };
+                    }
+
+                    Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+                    watchers = new List<Watcher>() {
+                        await _configurationManager.GetWatcher(pipeRequest.Payload.WatcherId ?? -1)
+                    };
                     return new PipeResponse
                     {
                         Status = t_ResponseStatus.SUCCESS,

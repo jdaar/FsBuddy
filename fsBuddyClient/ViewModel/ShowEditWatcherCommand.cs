@@ -11,12 +11,12 @@ using ConnectionInterface;
 
 namespace Client.ViewModel
 {
-    public class ShowCreateWatcherCommand : ICommand
+    public class ShowEditWatcherCommand : ICommand
     {
 
         public event EventHandler CanExecuteChanged { add { } remove { } }
 
-        public ShowCreateWatcherCommand() { }
+        public ShowEditWatcherCommand() { }
 
         public bool CanExecute(object parameter)
         {
@@ -25,7 +25,9 @@ namespace Client.ViewModel
 
         public void Execute(object parameter)
         {
-            var createWatcherWindow = new CreateWatcher();
+            Watcher watcher = (Watcher)parameter;
+
+            var createWatcherWindow = new EditWatcher(watcher.Id);
             createWatcherWindow.ShowDialog();
         }
     }

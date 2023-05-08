@@ -21,6 +21,7 @@
     <None Remove="Assets\logo_white.png" />
     <None Remove="Assets\logo_white.svg" />
     <None Remove="Assets\montserrat.ttf" />
+    <None Remove="Assets\source_code_pro.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,13 @@
     <Resource Include="Assets\montserrat.ttf">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\source_code_pro.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\EditWatcher.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

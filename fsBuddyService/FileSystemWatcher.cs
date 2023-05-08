@@ -11,8 +11,6 @@ using ConnectionInterface;
 
 namespace Service
 {
-
-
     class FileSystemWatcherDisposable : IDisposable
     {
         private bool disposed = false;
@@ -35,11 +33,40 @@ namespace Service
                     if (fsEvent.Name == null)
                         return;
 
-                    try
+                    var splitFileName = fsEvent.Name.Split('.');
+                    var partFilter = $"{String.Join("", splitFileName.Take(splitFileName.Length - 1))}*.part";
+
+                    var fileExists = File.Exists(fsEvent.FullPath);
+
+                    Log.Information("{InputPath} searching for file {partFilter}", watcher.InputPath, partFilter);
+
+                    var fileIsDownloading = Directory.GetFiles(watcher.InputPath!, partFilter).Length > 0;
+
+                    var fileOutputExists = File.Exists(Path.Combine(watcher.OutputPath, fsEvent.Name));
+
+                    Log.Information("The file {partFilter} exists: {fileIsDownloading}", partFilter, fileIsDownloading);
+
+                    if (!fileExists)
                     {
-                        File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fsEvent.Name));
+                        Log.Information("File does not longer exist");
+                        return;
                     }
-                    catch (IOException)
+                    if (fileIsDownloading)
+                    {
+                        Log.Information("File is not ready yet");
+                        return;
+                    }
+                    if (!fileOutputExists)
+                    {
+                        try
+                        {
+                            File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fsEvent.Name));
+                        }
+                        catch (Exception error) 
+                        {
+                            Log.Error(error, "Couldn't execute MOVE action");
+                        }
+                    } else
                     {
                         var splitFilename = fsEvent.Name.Split('.');
 
@@ -48,7 +75,6 @@ namespace Service
                         fileName = $"{fileName} (new).{fileExtension}";
 
                         Log.Information("Attempting to execute MOVE action with filename {fileName}", fileName);
-
                         try
                         {
                             File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fileName));
@@ -56,10 +82,6 @@ namespace Service
                         {
                             Log.Error(error, "Couldn't execute MOVE action");
                         }
-                    }
-                    catch (Exception error) 
-                    {
-                        Log.Error(error, "Couldn't execute MOVE action");
                     }
                 }
             );

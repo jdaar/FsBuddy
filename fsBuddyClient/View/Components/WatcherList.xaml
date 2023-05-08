@@ -45,7 +45,7 @@
 
         <Style x:Key="CardMainTitle"  TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="{DynamicResource Title}" />
-            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontSize" Value="25" />
             <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -92,6 +92,7 @@
                                     <RowDefinition Height="55" />
                                     <RowDefinition Height="15" />
                                     <RowDefinition Height="*" />
+                                    <RowDefinition Height="15" />
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0">
                                     <Grid.ColumnDefinitions>
@@ -113,7 +114,7 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="60" />
-                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="20" />
                                                 <ColumnDefinition Width="60" />
                                             </Grid.ColumnDefinitions>
 
@@ -142,7 +143,9 @@
                                                     </Button.Template>
                                                 </Button>
 
-                                            <Button Grid.Column="3" >
+                                            <Button Grid.Column="3" 
+                                                    Command="{Binding Path=DataContext.ShowEditWatcherCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
                                                 <Button.Template>
                                                         <ControlTemplate TargetType="{x:Type Button}">
                                                             <Border Style="{StaticResource ButtonWrapper}" Grid.Column="3" >

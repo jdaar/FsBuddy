@@ -26,14 +26,14 @@ namespace Configuration
 
         public ConfigurationContext(DbContextOptions<ConfigurationContext> options) : base(options) {}
 
-        public override int SaveChanges()
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
             foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Added))
             {
                 entry.Property("CreatedAt").CurrentValue = now;
             }
-            return base.SaveChanges();
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

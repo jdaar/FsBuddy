@@ -158,9 +158,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="20" />
                                         <ColumnDefinition Width="60" />
                                     </Grid.ColumnDefinitions>
 
@@ -204,31 +202,6 @@
                                                                         <BitmapImage 
                                                                             UriSource="pack://application:,,,/Assets/Icons/logs.png"
                                                                             DecodePixelHeight="100" DecodePixelWidth="90">
-                                                                        </BitmapImage>
-                                                                    </Image.Source>
-                                                                </Image>
-                                                            </Grid>
-                                                        </Border>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-
-                                        <Button Grid.Column="5" Command="{Binding RefreshCommand}">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="{x:Type Button}">
-                                                    <Border Style="{StaticResource ButtonWrapper}" Grid.Column="5">
-                                                        <Border Padding="5">
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                </Grid.ColumnDefinitions>
-
-                                                                <Image HorizontalAlignment="Center" Grid.Column="0">
-                                                                <Image.Source>
-                                                                        <BitmapImage 
-                                                                            UriSource="pack://application:,,,/Assets/Icons/shrink.png"
-                                                                            DecodePixelHeight="100" DecodePixelWidth="100">
                                                                         </BitmapImage>
                                                                     </Image.Source>
                                                                 </Image>

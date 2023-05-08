@@ -28,7 +28,7 @@ namespace Client.ViewModel
 
         public async void Execute(object parameter)
         {
-            var watcherForm = (WatcherForm)parameter;
+            var watcherForm = (t_WatcherForm)parameter;
 
             var request = new PipeRequest
             {

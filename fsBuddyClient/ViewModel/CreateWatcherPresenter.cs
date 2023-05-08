@@ -17,6 +17,7 @@ using System.Windows;
 namespace Client.ViewModel
 {
     public class t_WatcherForm {
+        public int? Id { get; set; }
         public string? Name { get; set; }
         public string? InputPath { get; set; }
         public string? OutputPath { get; set; }

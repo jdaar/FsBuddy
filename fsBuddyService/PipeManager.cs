@@ -111,6 +111,26 @@ namespace Service
                         Status = t_ResponseStatus.SUCCESS,
                         Payload = new PipeResponsePayload { }
                     };
+                case t_PipeCommand.UPDATE_WATCHER:
+                    if (pipeRequest?.Payload?.WatcherId == null || pipeRequest?.Payload?.WatcherData == null)
+                    {
+                        return new PipeResponse
+                        {
+                            Status = t_ResponseStatus.FAILURE,
+                            Payload = new PipeResponsePayload {
+                                ErrorMessage = "Watcher id or data not defined"
+                            }
+                        };
+                    }
+
+                    Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+                    await _configurationManager.UpdateWatcher(pipeRequest.Payload.WatcherId ?? -1, pipeRequest.Payload.WatcherData);
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload { 
+                        }
+                    };
                 case t_PipeCommand.GET_ALL_WATCHER:
                     Log.Information("Getting all watchers");
                     watchers = await _configurationManager.GetWatchers();

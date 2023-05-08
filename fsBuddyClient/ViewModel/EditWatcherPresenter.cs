@@ -158,6 +158,7 @@ namespace Client.ViewModel
 
             WatcherForm = new t_WatcherForm
             {
+                Id = WatcherId,
                 Name = watcher.Name,
                 InputPath = watcher.InputPath,
                 OutputPath = watcher.OutputPath,
@@ -175,7 +176,7 @@ namespace Client.ViewModel
             );
 
             WatcherId = watcherId;
-            EditWatcherCommand = new CreateWatcherCommand(serviceConnection);
+            EditWatcherCommand = new EditWatcherCommand(serviceConnection);
             Task.Run(PopulateWatcherForm);
         }
     }

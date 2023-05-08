@@ -162,12 +162,12 @@
                         <Border Grid.Row="10" Style="{StaticResource TextInputWrapper}">
                             <TextBox Style="{StaticResource TextInput}" Text="{Binding Path=WatcherFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                         </Border>
-                        <Button Grid.Row="12" Command="{Binding CreateWatcherCommand}" CommandParameter="{Binding WatcherForm}">
+                        <Button Grid.Row="12" Command="{Binding EditWatcherCommand}" CommandParameter="{Binding WatcherForm}">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border Style="{StaticResource ButtonWrapper}">
                                         <Border Padding="5">
-                                            <TextBlock Grid.Row="0" Text="Create" HorizontalAlignment="Center" FontWeight="Bold"  Style="{StaticResource CardParagraph}"></TextBlock>
+                                            <TextBlock Grid.Row="0" Text="Edit" HorizontalAlignment="Center" FontWeight="Bold"  Style="{StaticResource CardParagraph}"></TextBlock>
                                         </Border>
                                     </Border>
                                 </ControlTemplate>

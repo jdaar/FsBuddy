@@ -64,6 +64,23 @@ namespace Configuration
             return await _context.Watchers.Where(watcher => watcher.Id == watcherId).FirstAsync();
         }
 
+        public async Task UpdateWatcher(int watcherId, Watcher watcherData)
+        {
+            var watcher = await _context.Watchers.SingleOrDefaultAsync(watcher => watcher.Id == watcherId);
+            if (watcher == null)
+            {
+                return;
+            }
+
+            watcher.Name = watcherData.Name;
+            watcher.InputPath = watcherData.InputPath;
+            watcher.OutputPath = watcherData.OutputPath;
+            watcher.SearchPattern = watcherData.SearchPattern;
+            watcher.Action = watcherData.Action;
+
+            await _context.SaveChangesAsync(CancellationToken.None);
+        }
+
         public async Task<ServiceSetting?> GetServiceSetting(t_Setting type)
         {
             return await _context.SystemSettings.Where(setting => setting.Type == type).FirstOrDefaultAsync();

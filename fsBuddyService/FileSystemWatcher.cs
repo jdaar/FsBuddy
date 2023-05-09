@@ -29,7 +29,6 @@ namespace Service
                 t_WatcherAction.MOVE, 
                 delegate (Watcher watcher, FileSystemEventArgs fsEvent)
                 {
-                    RegisterExecutionCallback?.Invoke(watcher.Id);
                     Log.Information("From watcher action {@watcher} and event {@fsEvent}", watcher, fsEvent);
 
                     if (watcher.OutputPath == null)
@@ -38,7 +37,7 @@ namespace Service
                         return;
 
                     var splitFileName = fsEvent.Name.Split('.');
-                    var partFilter = $"{String.Join("", splitFileName.Take(splitFileName.Length - 1))}*.part";
+                    var partFilter = $"{String.Join(".", splitFileName.Take(splitFileName.Length - 1))}*.part";
 
                     var fileExists = File.Exists(fsEvent.FullPath);
 
@@ -47,6 +46,8 @@ namespace Service
                     var fileIsDownloading = Directory.GetFiles(watcher.InputPath!, partFilter).Length > 0;
 
                     var fileOutputExists = File.Exists(Path.Combine(watcher.OutputPath, fsEvent.Name));
+
+                    var fileIsEmpty = new FileInfo(fsEvent.FullPath).Length == 0;
 
                     Log.Information("The file {partFilter} exists: {fileIsDownloading}", partFilter, fileIsDownloading);
 
@@ -58,6 +59,11 @@ namespace Service
                     if (fileIsDownloading)
                     {
                         Log.Information("File is not ready yet");
+                        return;
+                    }
+                    if (fileIsEmpty)
+                    {
+                        Log.Information("File is empty");
                         return;
                     }
                     if (!fileOutputExists)
@@ -76,7 +82,10 @@ namespace Service
 
                         var fileExtension = splitFilename.Last();
                         var fileName = String.Join('.', splitFilename.Take(splitFilename.Length - 1));
-                        fileName = $"{fileName} (new).{fileExtension}";
+
+                        var fileIndex = Directory.GetFiles(watcher.OutputPath, $"{fileName}*.{fileExtension}").Length;
+
+                        fileName = $"{fileName} ({fileIndex}).{fileExtension}";
 
                         Log.Information("Attempting to execute MOVE action with filename {fileName}", fileName);
                         try
@@ -87,6 +96,7 @@ namespace Service
                             Log.Error(error, "Couldn't execute MOVE action");
                         }
                     }
+                    RegisterExecutionCallback?.Invoke(watcher.Id);
                 }
             );
             IsWatcherActionsInitialized = true;

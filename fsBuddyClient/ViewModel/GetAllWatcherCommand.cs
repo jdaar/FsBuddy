@@ -13,14 +13,12 @@ namespace Client.ViewModel
     public class GetAllWatcherCommand : ICommand
     {
         private readonly ServiceConnection _serviceConnection;
-        private readonly Presenter _presenter;
 
         public event EventHandler CanExecuteChanged { add { } remove { } }
 
-        public GetAllWatcherCommand(ServiceConnection serviceConnection, Presenter presenter)
+        public GetAllWatcherCommand(ServiceConnection serviceConnection)
         {
             _serviceConnection = serviceConnection;
-            _presenter = presenter;
         }
 
         public bool CanExecute(object parameter)

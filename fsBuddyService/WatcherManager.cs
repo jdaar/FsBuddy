@@ -107,7 +107,7 @@ namespace Service
 
         public void RefreshWatchers(List<Watcher> newWatchers)
         {
-            watchers = newWatchers;
+            watchers = newWatchers.Where(watcher => watcher.IsEnabled ?? false).ToList();
             RefreshFsDisposables();
         }
 

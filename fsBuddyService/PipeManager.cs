@@ -125,6 +125,10 @@ namespace Service
 
                     Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
                     await _configurationManager.UpdateWatcher(pipeRequest.Payload.WatcherId ?? -1, pipeRequest.Payload.WatcherData);
+
+                    watchers = await _configurationManager.GetWatchers();
+                    _watcherManager.RefreshWatchers(watchers);
+
                     return new PipeResponse
                     {
                         Status = t_ResponseStatus.SUCCESS,

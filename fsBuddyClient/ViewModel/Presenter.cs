@@ -48,6 +48,7 @@ namespace Client.ViewModel
         public ICommand ShowCreateWatcherCommand { get; set; }
         public ICommand ShowEditWatcherCommand { get; set; }
         public ICommand GetAllWatcherCommand { get; set; }
+        public ICommand PauseWatcherCommand { get; set; }
 
         public void OnPropertyChanged(string propertyName)
         {
@@ -74,7 +75,9 @@ namespace Client.ViewModel
 
             RefreshCommand = new RefreshCommand(serviceConnection);
             SwitchConnectionStatusCommand = new SwitchConnectionStatusCommand(serviceConnection);
-            GetAllWatcherCommand = new GetAllWatcherCommand(serviceConnection, this);
+            GetAllWatcherCommand = new GetAllWatcherCommand(serviceConnection);
+            PauseWatcherCommand = new PauseWatcherCommand(serviceConnection);
+
             ShowCreateWatcherCommand = new ShowCreateWatcherCommand();
             ShowEditWatcherCommand = new ShowEditWatcherCommand();
         }

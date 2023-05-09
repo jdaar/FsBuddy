@@ -77,6 +77,7 @@ namespace Configuration
             watcher.InputPath = watcherData.InputPath;
             watcher.OutputPath = watcherData.OutputPath;
             watcher.SearchPattern = watcherData.SearchPattern;
+            watcher.IsEnabled = watcherData.IsEnabled;
             watcher.Action = watcherData.Action;
 
             await _context.SaveChangesAsync(CancellationToken.None);

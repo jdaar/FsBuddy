@@ -56,6 +56,9 @@ namespace ConnectionInterface
         [Column(name: "output_path")]
         public string? OutputPath { get; set; }
 
+        [Column(name: "is_enabled")]
+        public bool? IsEnabled { get; set; } = true;
+
         [Required]
         [Column(name: "action")]
         public  t_WatcherAction Action { get; set; }

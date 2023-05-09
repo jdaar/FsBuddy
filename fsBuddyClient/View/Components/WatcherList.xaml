@@ -58,6 +58,11 @@
             <Setter Property="Fill" Value="{DynamicResource Success}"/>
             <Setter Property="Width" Value="10"/>
             <Setter Property="Height" Value="10"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEnabled}" Value="False">
+                    <Setter Property="Fill" Value="{DynamicResource Error}" />  
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="ButtonWrapper" TargetType="{x:Type Border}">
@@ -118,7 +123,9 @@
                                                 <ColumnDefinition Width="60" />
                                             </Grid.ColumnDefinitions>
 
-                                            <Button Grid.Column="1">
+                                            <Button Grid.Column="1"
+                                                    Command="{Binding Path=DataContext.PauseWatcherCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
                                                 <Button.Template>
                                                         <ControlTemplate>
                                                             <Border Style="{StaticResource ButtonWrapper}" Grid.Column="1">

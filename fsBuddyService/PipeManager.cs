@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using ConnectionInterface;
 using Configuration;
 using Serilog;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Service
 {
@@ -26,6 +27,8 @@ namespace Service
         const string PIPE_NAME = "fsbuddy-service";
         const int PIPE_STREAM_END_BYTE = -1;
 
+        private Dictionary<t_PipeCommand, Func<PipeRequest, Task<PipeResponse>>> Handlers;
+
         public PipeManager(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -35,6 +38,14 @@ namespace Service
             _watcherManager = _serviceScope.ServiceProvider.GetRequiredService<WatcherManager>();
             _configurationManager = _serviceScope.ServiceProvider.GetRequiredService<ManagerConfiguration>();
             _pipeServer = PipeFactory();
+
+            Handlers = new() {
+                { t_PipeCommand.CREATE_WATCHER, HandleCreateWatcher },
+                { t_PipeCommand.UPDATE_WATCHER, HandleUpdateWatcher },
+                { t_PipeCommand.DELETE_WATCHER, HandleDeleteWatcher },
+                { t_PipeCommand.GET_ALL_WATCHER, HandleGetAllWatcher },
+                { t_PipeCommand.GET_WATCHER, HandleGetWatcher }
+            };
 
             _writer = new StreamWriter(_pipeServer);
             _reader = new StreamReader(_pipeServer);
@@ -84,168 +95,142 @@ namespace Service
             await _writer.FlushAsync();
         }
 
+        private async Task<PipeResponse> HandleCreateWatcher(PipeRequest pipeRequest)
+        {
+            if (pipeRequest?.Payload?.WatcherData == null)
+            {
+                return new PipeResponse
+                {
+                    Status = t_ResponseStatus.FAILURE,
+                    Payload = new PipeResponsePayload {
+                        ErrorMessage = "Watcher data not defined"
+                    }
+                };
+            }
+            Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload.WatcherData);
+
+            await _configurationManager.CreateWatcher(pipeRequest.Payload.WatcherData);
+            var watchers = await _configurationManager.GetWatchers();
+            _watcherManager.RefreshWatchers(watchers);
+
+            return new PipeResponse
+            {
+                Status = t_ResponseStatus.SUCCESS,
+                Payload = new PipeResponsePayload { }
+            };
+        }
+        private async Task<PipeResponse> HandleUpdateWatcher(PipeRequest pipeRequest)
+        { 
+            if (pipeRequest?.Payload?.WatcherId == null || pipeRequest?.Payload?.WatcherData == null)
+            {
+                return new PipeResponse
+                {
+                    Status = t_ResponseStatus.FAILURE,
+                    Payload = new PipeResponsePayload {
+                        ErrorMessage = "Watcher id or data not defined"
+                    }
+                };
+            }
+
+            Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+            await _configurationManager.UpdateWatcher(pipeRequest.Payload.WatcherId ?? -1, pipeRequest.Payload.WatcherData);
+
+            var watchers = await _configurationManager.GetWatchers();
+            _watcherManager.RefreshWatchers(watchers);
+
+            return new PipeResponse
+            {
+                Status = t_ResponseStatus.SUCCESS,
+                Payload = new PipeResponsePayload { 
+                }
+            };
+        }
+        private async Task<PipeResponse> HandleDeleteWatcher(PipeRequest pipeRequest)
+        {
+            if (pipeRequest?.Payload?.WatcherId == null)
+            {
+                return new PipeResponse
+                {
+                    Status = t_ResponseStatus.FAILURE,
+                    Payload = new PipeResponsePayload {
+                        ErrorMessage = "Watcher id is not defined"
+                    }
+                };
+            }
+
+            Log.Information("Deleting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+            await _configurationManager.DeleteWatcher(pipeRequest.Payload.WatcherId ?? -1);
+
+            var watchers = await _configurationManager.GetWatchers();
+            _watcherManager.RefreshWatchers(watchers);
+
+            return new PipeResponse
+            {
+                Status = t_ResponseStatus.SUCCESS,
+                Payload = new PipeResponsePayload { 
+                }
+            };
+        }
+        private async Task<PipeResponse> HandleGetAllWatcher(PipeRequest pipeRequest)
+        {
+            Log.Information("Getting all watchers");
+            var watchers = await _configurationManager.GetWatchers();
+
+            return new PipeResponse
+            {
+                Status = t_ResponseStatus.SUCCESS,
+                Payload = new PipeResponsePayload {
+                    Watchers = watchers
+                }
+            };
+        }
+
+
+        private async Task<PipeResponse> HandleGetWatcher(PipeRequest pipeRequest)
+        {
+            if (pipeRequest?.Payload?.WatcherId == null)
+            {
+                return new PipeResponse
+                {
+                    Status = t_ResponseStatus.FAILURE,
+                    Payload = new PipeResponsePayload {
+                        ErrorMessage = "Watcher id not defined"
+                    }
+                };
+            }
+
+            Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+            var watchers = new List<Watcher>() {
+                await _configurationManager.GetWatcher(pipeRequest.Payload.WatcherId ?? -1)
+            };
+            return new PipeResponse
+            {
+                Status = t_ResponseStatus.SUCCESS,
+                Payload = new PipeResponsePayload { 
+                    Watchers = watchers
+                }
+            };
+
+        }
+        
+
         private async Task<PipeResponse> ProcessPipeRequest(PipeRequest pipeRequest)
         {
-            List<Watcher> watchers;
-            switch (pipeRequest.Command)
+            var handler = Handlers.GetValueOrDefault(pipeRequest.Command);
+
+            if (handler == null)
             {
-                case t_PipeCommand.CREATE_WATCHER:
-                    if (pipeRequest?.Payload?.WatcherData == null)
+                return new PipeResponse
+                {
+                    Status = t_ResponseStatus.FAILURE,
+                    Payload = new PipeResponsePayload
                     {
-                        return new PipeResponse
-                        {
-                            Status = t_ResponseStatus.FAILURE,
-                            Payload = new PipeResponsePayload {
-                                ErrorMessage = "Watcher data not defined"
-                            }
-                        };
+                        ErrorMessage = "Command not defined"
                     }
-                    Log.Information("Creating watcher {@WatcherData}", pipeRequest.Payload.WatcherData);
-
-                    await _configurationManager.CreateWatcher(pipeRequest.Payload.WatcherData);
-                    watchers = await _configurationManager.GetWatchers();
-                    _watcherManager.RefreshWatchers(watchers);
-
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { }
-                    };
-                case t_PipeCommand.UPDATE_WATCHER:
-                    if (pipeRequest?.Payload?.WatcherId == null || pipeRequest?.Payload?.WatcherData == null)
-                    {
-                        return new PipeResponse
-                        {
-                            Status = t_ResponseStatus.FAILURE,
-                            Payload = new PipeResponsePayload {
-                                ErrorMessage = "Watcher id or data not defined"
-                            }
-                        };
-                    }
-
-                    Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
-                    await _configurationManager.UpdateWatcher(pipeRequest.Payload.WatcherId ?? -1, pipeRequest.Payload.WatcherData);
-
-                    watchers = await _configurationManager.GetWatchers();
-                    _watcherManager.RefreshWatchers(watchers);
-
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { 
-                        }
-                    };
-                case t_PipeCommand.DELETE_WATCHER:
-                    if (pipeRequest?.Payload?.WatcherId == null)
-                    {
-                        return new PipeResponse
-                        {
-                            Status = t_ResponseStatus.FAILURE,
-                            Payload = new PipeResponsePayload {
-                                ErrorMessage = "Watcher id is not defined"
-                            }
-                        };
-                    }
-
-                    Log.Information("Deleting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
-                    await _configurationManager.DeleteWatcher(pipeRequest.Payload.WatcherId ?? -1);
-
-                    watchers = await _configurationManager.GetWatchers();
-                    _watcherManager.RefreshWatchers(watchers);
-
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { 
-                        }
-                    };
-                case t_PipeCommand.GET_ALL_WATCHER:
-                    Log.Information("Getting all watchers");
-                    watchers = await _configurationManager.GetWatchers();
-
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload {
-                            Watchers = watchers
-                        }
-                    };
-                case t_PipeCommand.GET_WATCHER:
-                    if (pipeRequest?.Payload?.WatcherId == null)
-                    {
-                        return new PipeResponse
-                        {
-                            Status = t_ResponseStatus.FAILURE,
-                            Payload = new PipeResponsePayload {
-                                ErrorMessage = "Watcher id not defined"
-                            }
-                        };
-                    }
-
-                    Log.Information("Getting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
-                    watchers = new List<Watcher>() {
-                        await _configurationManager.GetWatcher(pipeRequest.Payload.WatcherId ?? -1)
-                    };
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { 
-                            Watchers = watchers
-                        }
-                    };
-                case t_PipeCommand.PAUSE_WATCHER:
-                    if (pipeRequest?.Payload?.WatcherId == null)
-                    {
-                        return new PipeResponse
-                        {
-                            Status = t_ResponseStatus.FAILURE,
-                            Payload = new PipeResponsePayload {
-                                ErrorMessage = "Watcher id not defined"
-                            }
-                        };
-                    }
-
-                    _watcherManager.StopFsDisposable(pipeRequest.Payload.WatcherId ?? -1);
-
-                    Log.Information("Stopping watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { 
-                        }
-                    };
-                case t_PipeCommand.GET_WATCHER_STATUS:
-                    if (pipeRequest?.Payload?.WatcherId == null)
-                    {
-                        return new PipeResponse
-                        {
-                            Status = t_ResponseStatus.FAILURE,
-                            Payload = new PipeResponsePayload {
-                                ErrorMessage = "Watcher id not defined"
-                            }
-                        };
-                    }
-
-                    var isWatcherRunning = _watcherManager.IsFsDisposableRunning(pipeRequest.Payload.WatcherId ?? -1);
-
-                    Log.Information("Stopping watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.SUCCESS,
-                        Payload = new PipeResponsePayload { 
-                            WatcherStatus = isWatcherRunning
-                        }
-                    };
-                default:
-                    return new PipeResponse
-                    {
-                        Status = t_ResponseStatus.FAILURE,
-                        Payload = new PipeResponsePayload
-                        {
-                            ErrorMessage = "Command not defined"
-                        }
-                    };
+                };
             }
+            
+            return await handler(pipeRequest);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

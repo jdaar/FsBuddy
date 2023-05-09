@@ -57,7 +57,10 @@ namespace Client.ViewModel
 
             await _serviceConnection.RefreshWatchers();
 
-            MessageBox.Show($"Status: {response?.Status}");
+            if (response?.Status == t_ResponseStatus.SUCCESS)
+            {
+                MessageBox.Show("Watcher was succesfully edited", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

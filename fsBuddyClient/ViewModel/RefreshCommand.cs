@@ -45,7 +45,10 @@ namespace Client.ViewModel
                 return;
             }
 
-            MessageBox.Show($"Status: {response?.Status}. Payload: {response?.Payload?.Watchers}");
+            if (response?.Status == t_ResponseStatus.SUCCESS)
+            {
+                MessageBox.Show("Watcher was succesfully deleted", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

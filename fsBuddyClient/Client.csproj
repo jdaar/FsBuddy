@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="Assets\font.ttf" />
     <None Remove="Assets\Icons\create.png" />
+    <None Remove="Assets\Icons\delete.png" />
     <None Remove="Assets\Icons\edit.png" />
     <None Remove="Assets\Icons\logs.png" />
     <None Remove="Assets\Icons\pause.png" />
@@ -36,6 +37,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\Icons\create.png" />
+    <Resource Include="Assets\Icons\delete.png" />
     <Resource Include="Assets\Icons\edit.png" />
     <Resource Include="Assets\Icons\logs.png" />
     <Resource Include="Assets\Icons\pause.png" />

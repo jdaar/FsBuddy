@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using ConnectionInterface;
 using System.Runtime.CompilerServices;
+using System.Formats.Asn1;
 
 namespace Configuration
 {
@@ -80,6 +81,18 @@ namespace Configuration
             watcher.IsEnabled = watcherData.IsEnabled;
             watcher.Action = watcherData.Action;
 
+            await _context.SaveChangesAsync(CancellationToken.None);
+        }
+
+        public async Task DeleteWatcher(int watcherId)
+        {
+            var watcher = await _context.Watchers.SingleOrDefaultAsync(watcher => watcher.Id == watcherId);
+            if (watcher == null)
+            {
+                return;
+            }
+
+            _context.Watchers.Remove(watcher);
             await _context.SaveChangesAsync(CancellationToken.None);
         }
 

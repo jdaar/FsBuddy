@@ -135,6 +135,30 @@ namespace Service
                         Payload = new PipeResponsePayload { 
                         }
                     };
+                case t_PipeCommand.DELETE_WATCHER:
+                    if (pipeRequest?.Payload?.WatcherId == null)
+                    {
+                        return new PipeResponse
+                        {
+                            Status = t_ResponseStatus.FAILURE,
+                            Payload = new PipeResponsePayload {
+                                ErrorMessage = "Watcher id is not defined"
+                            }
+                        };
+                    }
+
+                    Log.Information("Deleting watcher with id {WatcherId}", pipeRequest.Payload.WatcherId);
+                    await _configurationManager.DeleteWatcher(pipeRequest.Payload.WatcherId ?? -1);
+
+                    watchers = await _configurationManager.GetWatchers();
+                    _watcherManager.RefreshWatchers(watchers);
+
+                    return new PipeResponse
+                    {
+                        Status = t_ResponseStatus.SUCCESS,
+                        Payload = new PipeResponsePayload { 
+                        }
+                    };
                 case t_PipeCommand.GET_ALL_WATCHER:
                     Log.Information("Getting all watchers");
                     watchers = await _configurationManager.GetWatchers();

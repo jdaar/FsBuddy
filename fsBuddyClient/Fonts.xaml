@@ -1,5 +1,0 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <FontFamily x:Key="Montserrat">pack://application:,,,/Client;component/Assets/#Montserrat Thin</FontFamily>
-    <FontFamily x:Key="SourceCodePro">pack://application:,,,/Client;component/Assets/#Source Code Pro ExtraLight</FontFamily>
-</ResourceDictionary>

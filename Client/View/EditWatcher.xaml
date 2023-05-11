@@ -1,0 +1,196 @@
+﻿<Window x:Class="Client.View.EditWatcher"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client.View"
+        xmlns:ViewModel="clr-namespace:Client.ViewModel"
+        xmlns:Component="clr-namespace:Client.View.Components"
+        mc:Ignorable="d"
+        
+        WindowState="Normal"
+        WindowStartupLocation="CenterScreen"
+
+        Title="Create watcher" 
+        Height="600" Width="700"
+        MinHeight="600" MinWidth="400"
+        >
+
+    <Window.InputBindings>
+        <KeyBinding Command="ApplicationCommands.Close" Key="Esc" />
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Close" Executed="CloseWindow" />
+    </Window.CommandBindings>
+
+    <Window.Resources>
+        <Style x:Key="MainWrapper" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+            <Setter Property="Background" Value="{DynamicResource MainBackground}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+        <Style x:Key="LogWrapper" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+            <Setter Property="Background" Value="{DynamicResource DarkerBackground}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+        <Style x:Key="TextInput" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Title}" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style x:Key="TextInputWrapper" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+            <Setter Property="Background" Value="{DynamicResource DarkerBackground}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+        <Style x:Key="LogList" TargetType="{x:Type ListView}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        <Style x:Key="CardMainTitle"  TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{DynamicResource Title}" />
+            <Setter Property="FontSize" Value="25" />
+            <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="CardParagraph"  TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{DynamicResource Title}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
+            <Setter Property="FontWeight" Value="Regular" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="ButtonWrapper" TargetType="{x:Type Border}">
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="Background" Value="{DynamicResource AccentBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+        <Style x:Key="FileStatus" TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource Title}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="{StaticResource SourceCodePro}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsIncluded}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource Success}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
+        </Style>
+
+        <SolidColorBrush x:Key="AppBackground">#000000</SolidColorBrush>
+        <SolidColorBrush x:Key="MainBackground">#00171F</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkerBackground">#000F14</SolidColorBrush>
+        <SolidColorBrush x:Key="MainForeground">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="MainBorder">#003459</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentBackground">#003459</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentForeground">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentBorder">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="Title">#00A8E8</SolidColorBrush>
+        <SolidColorBrush x:Key="Subtitle">#007EA7</SolidColorBrush>
+        <SolidColorBrush x:Key="Error">#E80000</SolidColorBrush>
+        <SolidColorBrush x:Key="Success">#20E800</SolidColorBrush>
+    </Window.Resources>
+
+    <Border Padding="10" Background="{StaticResource MainBackground}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Padding="5">
+                    <TextBlock Style="{StaticResource CardMainTitle}" Text="Edit watcher"></TextBlock>
+                </Border>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center"  Style="{StaticResource CardParagraph}" Text="Preview"></TextBlock>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Padding="5">
+                    <Grid VerticalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="40" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Name" Style="{StaticResource CardParagraph}"></TextBlock>
+                        <TextBlock Grid.Row="3" Text="Input folder" Style="{StaticResource CardParagraph}"></TextBlock>
+                        <TextBlock Grid.Row="6" Text="Output folder" Style="{StaticResource CardParagraph}"></TextBlock>
+                        <TextBlock Grid.Row="9" Text="Search pattern" Style="{StaticResource CardParagraph}"></TextBlock>
+
+                        <Border Grid.Row="1" Style="{StaticResource TextInputWrapper}">
+                            <TextBox Style="{StaticResource TextInput}" Text="{Binding Path=WatcherName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        </Border>
+                        <Component:FolderEntry Grid.Row="4" Text="{Binding Path=WatcherInputPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Component:FolderEntry Grid.Row="7" Text="{Binding Path=WatcherOutputPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Border Grid.Row="10" Style="{StaticResource TextInputWrapper}">
+                            <TextBox Style="{StaticResource TextInput}" Text="{Binding Path=WatcherFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        </Border>
+                        <Button Grid.Row="12" Command="{Binding EditWatcherCommand}" CommandParameter="{Binding WatcherForm}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Style="{StaticResource ButtonWrapper}">
+                                        <Border Padding="5">
+                                            <TextBlock Grid.Row="0" Text="Edit" HorizontalAlignment="Center" FontWeight="Bold"  Style="{StaticResource CardParagraph}"></TextBlock>
+                                        </Border>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" Padding="10">
+                    <Border Style="{StaticResource LogWrapper}">
+                        <ListView Style="{StaticResource LogList}" ItemsSource="{Binding WatcherInputPathItems}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <TextBlock Style="{StaticResource FileStatus}" Text="{Binding Name}"></TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Border>
+                </Border>
+            </Grid>
+            
+        </Grid>
+    </Border>
+</Window>

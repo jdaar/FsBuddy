@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Client.View.Components.FolderEntry"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.View.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style x:Key="TextInput" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Title}" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style x:Key="TextInputWrapper" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="{DynamicResource MainBorder}"/>
+            <Setter Property="Background" Value="{DynamicResource DarkerBackground}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+        <Style x:Key="ButtonWrapper" TargetType="{x:Type Border}">
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="Background" Value="{DynamicResource AccentBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBorder}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="40" />
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="2" Click="BrowseFolder">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Style="{StaticResource ButtonWrapper}">
+                        <Border Padding="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image HorizontalAlignment="Center" Grid.Column="0">
+                                    <Image.Source>
+                                        <BitmapImage 
+                                            UriSource="pack://application:,,,/Assets/Icons/create.png"
+                                            DecodePixelHeight="100" DecodePixelWidth="80">
+                                        </BitmapImage>
+                                    </Image.Source>
+                                </Image>
+                            </Grid>
+                        </Border>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <Border Grid.Column="0" Style="{StaticResource TextInputWrapper}">
+            <TextBox Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Right" 
+                Style="{StaticResource TextInput}"
+                Text="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+        </Border>
+    </Grid>
+</UserControl>

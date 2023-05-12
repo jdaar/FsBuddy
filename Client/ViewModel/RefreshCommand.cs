@@ -30,7 +30,7 @@ namespace Client.ViewModel
         {
             var request = new PipeRequest
             {
-                Command = t_PipeCommand.GET_WATCHER,
+                Command = PipeCommand.GET_WATCHER,
                 Payload = new PipeRequestPayload
                 {
                     WatcherId = 1
@@ -45,7 +45,7 @@ namespace Client.ViewModel
                 return;
             }
 
-            if (response?.Status == t_ResponseStatus.SUCCESS)
+            if (response?.Status == ResponseStatus.SUCCESS)
             {
                 MessageBox.Show("Watcher was succesfully deleted", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }

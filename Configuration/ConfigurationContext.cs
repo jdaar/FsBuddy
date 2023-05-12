@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using ConnectionInterface;
+using Microsoft.Data.Sqlite;
 
 namespace Configuration
 {
@@ -10,7 +11,7 @@ namespace Configuration
         {
             var _folder = Environment.SpecialFolder.LocalApplicationData;
             var _path = Environment.GetFolderPath(_folder);
-            var _dbPath = System.IO.Path.Join(_path, "fsBuddy.config.db");
+            var _dbPath = Path.Join(_path, "fsBuddy.config.db");
 
             var optionsBuilder = new DbContextOptionsBuilder<ConfigurationContext>();
             optionsBuilder.UseSqlite($"Data Source={_dbPath}");
@@ -22,7 +23,6 @@ namespace Configuration
     public class ConfigurationContext : DbContext
     {
         public DbSet<Watcher> Watchers { get; set; }
-        public DbSet<ServiceSetting> SystemSettings { get; set; }
 
         public ConfigurationContext(DbContextOptions<ConfigurationContext> options) : base(options) {}
 
@@ -34,6 +34,10 @@ namespace Configuration
                 entry.Property("CreatedAt").CurrentValue = now;
             }
             return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
         }
     }
 }

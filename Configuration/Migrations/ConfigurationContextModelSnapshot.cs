@@ -70,7 +70,7 @@ namespace Configuration.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("watchers", (string)null);
+                    b.ToTable("watchers");
                 });
 #pragma warning restore 612, 618
         }

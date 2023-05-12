@@ -14,19 +14,12 @@ namespace Service
     class FileSystemWatcherDisposable : IDisposable
     {
         private bool disposed = false;
-        private Watcher _watcher;
+        private readonly Watcher _watcher;
 
-        private static Dictionary<t_WatcherAction, Action<Watcher, FileSystemEventArgs>> WatcherActions = new();
-
-        private static Func<int, Task>? RegisterExecutionCallback;
-        private static bool IsWatcherActionsInitialized { get; set; } = false;
-
-        public FileSystemWatcher? fsWatcher;
-
-
-        private void PopulateWatcherActions() {
-            WatcherActions.Add(
-                t_WatcherAction.MOVE, 
+        private static readonly Dictionary<WatcherAction, Action<Watcher, FileSystemEventArgs>> WatcherActions = new()
+        {
+            {
+                WatcherAction.MOVE,
                 delegate (Watcher watcher, FileSystemEventArgs fsEvent)
                 {
                     Log.Information("From watcher action {@watcher} and event {@fsEvent}", watcher, fsEvent);
@@ -47,7 +40,6 @@ namespace Service
 
                     var fileOutputExists = File.Exists(Path.Combine(watcher.OutputPath, fsEvent.Name));
 
-                    var fileIsEmpty = new FileInfo(fsEvent.FullPath).Length == 0;
 
                     Log.Information("The file {partFilter} exists: {fileIsDownloading}", partFilter, fileIsDownloading);
 
@@ -61,6 +53,9 @@ namespace Service
                         Log.Information("File is not ready yet");
                         return;
                     }
+
+                    var fileIsEmpty = new FileInfo(fsEvent.FullPath).Length == 0;
+
                     if (fileIsEmpty)
                     {
                         Log.Information("File is empty");
@@ -72,7 +67,7 @@ namespace Service
                         {
                             File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fsEvent.Name));
                         }
-                        catch (Exception error) 
+                        catch (Exception error)
                         {
                             Log.Error(error, "Couldn't execute MOVE action");
                         }
@@ -91,24 +86,23 @@ namespace Service
                         try
                         {
                             File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fileName));
-                        } catch (Exception error) 
+                        } catch (Exception error)
                         {
                             Log.Error(error, "Couldn't execute MOVE action");
                         }
                     }
                     RegisterExecutionCallback?.Invoke(watcher.Id);
                 }
-            );
-            IsWatcherActionsInitialized = true;
-        }
+            }
+        };
+
+        private static Func<int, Task>? RegisterExecutionCallback;
+
+        public FileSystemWatcher? fsWatcher;
+
 
         public FileSystemWatcherDisposable(Watcher watcher, Func<int, Task> registerExecutionCallback)
         {
-            if (!IsWatcherActionsInitialized)
-            {
-                PopulateWatcherActions();
-            }
-
             RegisterExecutionCallback = registerExecutionCallback;
 
             _watcher = watcher;
@@ -117,7 +111,7 @@ namespace Service
                 {
                     if (watcher.InputPath == null)
                     {
-                        throw new ArgumentNullException("InputPath cannot be null");
+                        throw new ArgumentNullException(watcher.InputPath);
                     }
 
                     try
@@ -155,10 +149,7 @@ namespace Service
             {
                 Log.Information("File created: {FullPath}", e.FullPath);
                 var action = WatcherActions.GetValueOrDefault(_watcher.Action);
-                if (action != null)
-                {
-                    action.Invoke(_watcher, e);
-                }
+                action?.Invoke(_watcher, e);
             }
         }
 
@@ -168,10 +159,7 @@ namespace Service
             {
                 Log.Information("File renamed: {FullPath}", e.FullPath);
                 var action = WatcherActions.GetValueOrDefault(_watcher.Action);
-                if (action != null)
-                {
-                    action.Invoke(_watcher, e);
-                }
+                action?.Invoke(_watcher, e);
             }
         }
 

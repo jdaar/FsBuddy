@@ -6,7 +6,7 @@ using Serilog.Formatting.Compact;
 if (!System.OperatingSystem.IsWindows())
     throw new PlatformNotSupportedException("Windows only");
 
-FileSystemService service = new FileSystemService();
+FileSystemService service = new();
 
 await service.RunAsync();
 

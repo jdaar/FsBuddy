@@ -32,7 +32,7 @@ namespace Client.ViewModel
 
             var request = new PipeRequest
             {
-                Command = t_PipeCommand.UPDATE_WATCHER,
+                Command = PipeCommand.UPDATE_WATCHER,
                 Payload = new PipeRequestPayload
                 {
                     WatcherId = watcherForm.Id,
@@ -42,7 +42,7 @@ namespace Client.ViewModel
                         InputPath = watcherForm.InputPath,
                         OutputPath = watcherForm.OutputPath,
                         SearchPattern = watcherForm.Filter,
-                        Action = t_WatcherAction.MOVE
+                        Action = WatcherAction.MOVE
                     }
                 }
             };
@@ -57,7 +57,7 @@ namespace Client.ViewModel
 
             await _serviceConnection.RefreshWatchers();
 
-            if (response?.Status == t_ResponseStatus.SUCCESS)
+            if (response?.Status == ResponseStatus.SUCCESS)
             {
                 MessageBox.Show("Watcher was succesfully edited", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }

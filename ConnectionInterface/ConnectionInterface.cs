@@ -3,38 +3,33 @@ using System.Text.Json;
 
 namespace ConnectionInterface
 {
-    public enum t_PipeCommand : int
+    public enum PipeCommand : int
     {
         GET_WATCHER = 0,
         GET_ALL_WATCHER = 1,
-        CREATE_WATCHER = 2,
-        UPDATE_WATCHER = 3,
-        DELETE_WATCHER = 4,
-        PAUSE_WATCHER = 5,
-        START_WATCHER = 6,
-        GET_SERVICESETTING = 7,
-        GET_ALL_SERVICESETTING = 8,
-        CREATE_SERVICESETTING = 9,
-        UPDATE_SERVICESETTING = 10,
-        DELETE_SERVICESETTING = 11,
-        GET_WATCHER_STATUS = 12,
+        GET_WATCHER_STATUS = 2,
+        CREATE_WATCHER = 3,
+        UPDATE_WATCHER = 4,
+        DELETE_WATCHER = 5,
+        PAUSE_WATCHER = 6,
+        START_WATCHER = 7,
     }
-    public enum t_ResponseStatus
+
+    public enum ResponseStatus
     {
         SUCCESS = 0,
         FAILURE = 1,
     }
+
     public class PipeRequestPayload
     {
         public int? WatcherId { get; set; }
-        public int? ServiceSettingId { get; set; }
         public Watcher? WatcherData { get; set; }
-        public ServiceSetting? ServiceSettingData { get; set; }
     }
 
     public class PipeRequest
     {
-        public t_PipeCommand Command { get; set; }
+        public PipeCommand Command { get; set; }
         public PipeRequestPayload? Payload { get; set; }
     } 
 
@@ -47,7 +42,7 @@ namespace ConnectionInterface
 
     public class PipeResponse
     {
-        public t_ResponseStatus Status { get; set; }
+        public ResponseStatus Status { get; set; }
         public PipeResponsePayload? Payload { get; set; }
     }
 
@@ -68,7 +63,7 @@ namespace ConnectionInterface
         public static async Task<string> SerializeResponse(PipeResponse pipeResponse)
         {
             using var stream = new MemoryStream();
-            await JsonSerializer.SerializeAsync<PipeResponse>(stream, pipeResponse);
+            await JsonSerializer.SerializeAsync(stream, pipeResponse);
             stream.Position = 0;
             using var reader = new StreamReader(stream);
             return await reader.ReadToEndAsync();
@@ -77,7 +72,7 @@ namespace ConnectionInterface
         public static async Task<string> SerializeRequest(PipeRequest pipeRequest)
         {
             using var stream = new MemoryStream();
-            await JsonSerializer.SerializeAsync<PipeRequest>(stream, pipeRequest);
+            await JsonSerializer.SerializeAsync(stream, pipeRequest);
             stream.Position = 0;
             using var reader = new StreamReader(stream);
             return await reader.ReadToEndAsync();
@@ -87,7 +82,7 @@ namespace ConnectionInterface
         {
             return new PipeResponse
             {
-                Status = t_ResponseStatus.FAILURE,
+                Status = ResponseStatus.FAILURE,
                 Payload = new PipeResponsePayload
                 {
                     ErrorMessage = error_message,

@@ -20,13 +20,13 @@ namespace Service
         private readonly ManagerConfiguration _configurationManager;
         private readonly IServiceProvider _serviceProvider;
         private readonly IServiceScope _serviceScope;
-        private NamedPipeServerStream _pipeServer;
-        private StreamWriter _writer;
-        private StreamReader _reader;
+        private readonly NamedPipeServerStream _pipeServer;
+        private readonly StreamWriter _writer;
+        private readonly StreamReader _reader;
 
         const string PIPE_NAME = "fsbuddy-service";
 
-        private Dictionary<t_PipeCommand, Func<PipeRequest, Task<PipeResponse>>> Handlers;
+        private readonly Dictionary<PipeCommand, Func<PipeRequest, Task<PipeResponse>>> Handlers;
 
         public PipeManager(IServiceProvider serviceProvider)
         {
@@ -39,11 +39,11 @@ namespace Service
             _pipeServer = PipeFactory();
 
             Handlers = new() {
-                { t_PipeCommand.CREATE_WATCHER, HandleCreateWatcher },
-                { t_PipeCommand.UPDATE_WATCHER, HandleUpdateWatcher },
-                { t_PipeCommand.DELETE_WATCHER, HandleDeleteWatcher },
-                { t_PipeCommand.GET_ALL_WATCHER, HandleGetAllWatcher },
-                { t_PipeCommand.GET_WATCHER, HandleGetWatcher }
+                { PipeCommand.CREATE_WATCHER, HandleCreateWatcher },
+                { PipeCommand.UPDATE_WATCHER, HandleUpdateWatcher },
+                { PipeCommand.DELETE_WATCHER, HandleDeleteWatcher },
+                { PipeCommand.GET_ALL_WATCHER, HandleGetAllWatcher },
+                { PipeCommand.GET_WATCHER, HandleGetWatcher }
             };
 
             _writer = new StreamWriter(_pipeServer);
@@ -58,7 +58,6 @@ namespace Service
             _writer.Dispose();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows only app")]
         private static NamedPipeServerStream PipeFactory()
         {
             var pipe = new NamedPipeServerStream(
@@ -100,7 +99,7 @@ namespace Service
             {
                 return new PipeResponse
                 {
-                    Status = t_ResponseStatus.FAILURE,
+                    Status = ResponseStatus.FAILURE,
                     Payload = new PipeResponsePayload {
                         ErrorMessage = "Watcher data not defined"
                     }
@@ -114,7 +113,7 @@ namespace Service
 
             return new PipeResponse
             {
-                Status = t_ResponseStatus.SUCCESS,
+                Status = ResponseStatus.SUCCESS,
                 Payload = new PipeResponsePayload { }
             };
         }
@@ -124,7 +123,7 @@ namespace Service
             {
                 return new PipeResponse
                 {
-                    Status = t_ResponseStatus.FAILURE,
+                    Status = ResponseStatus.FAILURE,
                     Payload = new PipeResponsePayload {
                         ErrorMessage = "Watcher id or data not defined"
                     }
@@ -139,7 +138,7 @@ namespace Service
 
             return new PipeResponse
             {
-                Status = t_ResponseStatus.SUCCESS,
+                Status = ResponseStatus.SUCCESS,
                 Payload = new PipeResponsePayload { 
                 }
             };
@@ -150,7 +149,7 @@ namespace Service
             {
                 return new PipeResponse
                 {
-                    Status = t_ResponseStatus.FAILURE,
+                    Status = ResponseStatus.FAILURE,
                     Payload = new PipeResponsePayload {
                         ErrorMessage = "Watcher id is not defined"
                     }
@@ -165,7 +164,7 @@ namespace Service
 
             return new PipeResponse
             {
-                Status = t_ResponseStatus.SUCCESS,
+                Status = ResponseStatus.SUCCESS,
                 Payload = new PipeResponsePayload { 
                 }
             };
@@ -177,7 +176,7 @@ namespace Service
 
             return new PipeResponse
             {
-                Status = t_ResponseStatus.SUCCESS,
+                Status = ResponseStatus.SUCCESS,
                 Payload = new PipeResponsePayload {
                     Watchers = watchers
                 }
@@ -191,7 +190,7 @@ namespace Service
             {
                 return new PipeResponse
                 {
-                    Status = t_ResponseStatus.FAILURE,
+                    Status = ResponseStatus.FAILURE,
                     Payload = new PipeResponsePayload {
                         ErrorMessage = "Watcher id not defined"
                     }
@@ -204,7 +203,7 @@ namespace Service
             };
             return new PipeResponse
             {
-                Status = t_ResponseStatus.SUCCESS,
+                Status = ResponseStatus.SUCCESS,
                 Payload = new PipeResponsePayload { 
                     Watchers = watchers
                 }
@@ -221,7 +220,7 @@ namespace Service
             {
                 return new PipeResponse
                 {
-                    Status = t_ResponseStatus.FAILURE,
+                    Status = ResponseStatus.FAILURE,
                     Payload = new PipeResponsePayload
                     {
                         ErrorMessage = "Command not defined"
@@ -248,7 +247,7 @@ namespace Service
 
                     Log.Information("Received: {line}", line);
 
-                    var request = default(PipeRequest);
+                    PipeRequest? request;
                     try
                     {
                         request = await PipeSerializer.DeserializeRequest(line);

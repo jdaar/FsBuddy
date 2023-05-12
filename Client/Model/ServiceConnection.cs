@@ -106,7 +106,7 @@ namespace Client.Model
         {
             var request = new PipeRequest
             {
-                Command = t_PipeCommand.GET_ALL_WATCHER,
+                Command = PipeCommand.GET_ALL_WATCHER,
                 Payload = new PipeRequestPayload { }
             };
 
@@ -163,7 +163,7 @@ namespace Client.Model
                 throw new Exception("Couldn't deserialize response");
             }
 
-            if (deserializedResponse.Status != t_ResponseStatus.SUCCESS)
+            if (deserializedResponse.Status != ResponseStatus.SUCCESS)
             {
                 MessageBox.Show($"Service error: {deserializedResponse.Payload}");
             }

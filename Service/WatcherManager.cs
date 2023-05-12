@@ -29,11 +29,6 @@ namespace Service
             }
         }
 
-        private async Task RetrieveServiceSettings()
-        {
-
-        }
-
         private void InitFsDisposables()
         {
             fsDisposables = watchers.Select(
@@ -113,8 +108,6 @@ namespace Service
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await RetrieveServiceSettings();
-
             watchers = await _managerConfiguration.GetWatchers();
             RefreshFsDisposables();
             

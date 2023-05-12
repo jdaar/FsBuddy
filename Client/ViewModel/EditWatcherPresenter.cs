@@ -140,7 +140,7 @@ namespace Client.ViewModel
         {
             var request = new PipeRequest
             {
-                Command = t_PipeCommand.GET_WATCHER,
+                Command = PipeCommand.GET_WATCHER,
                 Payload = new PipeRequestPayload
                 {
                     WatcherId = WatcherId

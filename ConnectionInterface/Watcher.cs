@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ConnectionInterface 
 {
-    public enum t_WatcherAction: int
+    public enum WatcherAction: int
     {
         MOVE,
         RENAME,
@@ -61,7 +61,7 @@ namespace ConnectionInterface
 
         [Required]
         [Column(name: "action")]
-        public  t_WatcherAction Action { get; set; }
+        public  WatcherAction Action { get; set; }
 
     }
 }

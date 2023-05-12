@@ -5,13 +5,15 @@ using Serilog.Formatting.Compact;
 using Serilog.Core;
 using System.ComponentModel.Design;
 using Microsoft.Extensions.Logging.EventLog;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Service
 {
     class FileSystemService
     {
-        private string appDirectoryPath;
-        private string logDirectoryPath;
+        private readonly string appDirectoryPath;
+        private readonly string logDirectoryPath;
         public IHostBuilder _hostBuilder;
 
         private Logger LoggerFactory()
@@ -53,12 +55,29 @@ namespace Service
                 })
                 .ConfigureServices(services =>
                 {
-                    services.AddSingleton<ManagerConfiguration>();
+                    services.AddDbContext<ConfigurationContext>(
+                        delegate(DbContextOptionsBuilder optionsBuilder) { 
+                            var _folder = Environment.SpecialFolder.LocalApplicationData;
+                            var _path = Environment.GetFolderPath(_folder);
+                            var _dbPath = Path.Join(_path, "fsBuddy.config.db");
 
-                    services.AddHostedService<PipeManager>();
+                            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = _dbPath };
+                            var connectionString = connectionStringBuilder.ToString();
+                            var connection = new SqliteConnection(connectionString);
+
+                            Log.Information("Using {connectionString}", connectionString);
+
+                            optionsBuilder.UseSqlite(connection);
+                        },
+                        ServiceLifetime.Scoped
+                    );
+
+                    services.AddTransient<ManagerConfiguration>();
 
                     services.AddSingleton<WatcherManager>();
-                    services.AddHostedService(provider => provider.GetService<WatcherManager>());
+
+                    services.AddHostedService<PipeManager>();
+                    services.AddHostedService(provider => provider.GetService<WatcherManager>()!);
 
                     if (OperatingSystem.IsWindows())
                     {
@@ -82,13 +101,16 @@ namespace Service
                 return;
             };
 
-            var serviceSettingsExists = await _manager.ServiceSettingsExists();
+            using var scope = host.Services.CreateScope();
+            using var context = scope.ServiceProvider.GetService<ConfigurationContext>();
 
-            if (!serviceSettingsExists)
+            if (context == null)
             {
-                Log.Information("Recreating service settings table");
-                await _manager.CreateDefaultServiceSettings();
+                Log.Fatal("Couldn't retrieve ConfigurationContext service");
+                return;
             }
+
+            await context.Database.EnsureCreatedAsync();
 
             await host.RunAsync();
         }

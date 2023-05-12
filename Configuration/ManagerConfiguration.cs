@@ -12,39 +12,28 @@ using System.Diagnostics;
 using ConnectionInterface;
 using System.Runtime.CompilerServices;
 using System.Formats.Asn1;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Configuration
 {
-    public class ManagerConfiguration
+    public class ManagerConfiguration: IDisposable
     {
-        private ConfigurationContext _context;
-        private readonly string appDirectoryPath;
+        private readonly IServiceScope _scope;
+        private readonly ConfigurationContext _context;
 
-        public ManagerConfiguration() { 
-            var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
-
-            appDirectoryPath = Path.Join(path, "fsBuddy");
-
-            var dbPath = Path.Join(appDirectoryPath, "fsBuddy.config.db");
-
-            var optionsBuilder = new DbContextOptionsBuilder<ConfigurationContext>();
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
-            
-            _context = new ConfigurationContext(optionsBuilder.Options);
-
-            Directory.CreateDirectory(appDirectoryPath);
-            _context.Database.EnsureCreated();
+        public ManagerConfiguration(IServiceProvider provider) {
+            _scope = provider.CreateScope();
+            _context = _scope.ServiceProvider.GetRequiredService<ConfigurationContext>();
         }
 
-        ~ManagerConfiguration()
+        public void Dispose()
         {
             _context.Dispose();
         }
 
         public async Task CreateWatcher(Watcher watcher)
         {
-            if (_context.Watchers.Where(_watcher => _watcher.Name == watcher.Name).Count() > 0)
+            if (_context.Watchers.Where(_watcher => _watcher.Name == watcher.Name).Any())
             {
                 return;
             }
@@ -61,6 +50,7 @@ namespace Configuration
         {
             return await _context.Watchers.ToListAsync();
         }
+
         public async Task<Watcher> GetWatcher(int watcherId)
         {
             return await _context.Watchers.Where(watcher => watcher.Id == watcherId).FirstAsync();
@@ -105,26 +95,8 @@ namespace Configuration
                 return;
             }
             watcher.ExecutedAt = now;
-            watcher.ModifiedFiles = watcher.ModifiedFiles + 1;
+            watcher.ModifiedFiles++;
 
-            await _context.SaveChangesAsync(CancellationToken.None);
-        }
-
-        public async Task<ServiceSetting?> GetServiceSetting(t_Setting type)
-        {
-            return await _context.SystemSettings.Where(setting => setting.Type == type).FirstOrDefaultAsync();
-        }
-
-        public async Task<bool> ServiceSettingsExists()
-        {
-            return await _context.SystemSettings.CountAsync() != 0;
-        }
-
-        public async Task CreateDefaultServiceSettings()
-        {
-            var ThreadNumberSetting = new ServiceSetting { Type = t_Setting.THREAD_NUMBER , Value = 2 };
-
-            await _context.SystemSettings.AddAsync(ThreadNumberSetting);
             await _context.SaveChangesAsync(CancellationToken.None);
         }
     }

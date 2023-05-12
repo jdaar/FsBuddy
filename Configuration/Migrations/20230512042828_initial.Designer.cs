@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Configuration.Migrations
 {
     [DbContext(typeof(ConfigurationContext))]
-    [Migration("20230509054330_remove-service-settings")]
-    partial class removeservicesettings
+    [Migration("20230512042828_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

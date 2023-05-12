@@ -37,11 +37,11 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: FsBuddy
-          path: /home/runner/work/fsBuddy/fsBuddyClient/bin/Debug/net6.0-windows7.0
+          path: /home/runner/work/fsBuddy/fsBuddyClient/bin/Release/net6.0-windows7.0
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
-          artifacts: /home/runner/work/fsBuddy/fsBuddyClient/bin/Debug/net6.0-windows7.0
+          artifacts: /home/runner/work/fsBuddy/fsBuddyClient/bin/Release/net6.0-windows7.0

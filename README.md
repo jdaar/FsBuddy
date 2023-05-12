@@ -8,6 +8,10 @@
 
 An open-source platform for filesystem automation provides a user-friendly graphical user interface (GUI) that is designed to simplify the automation of various filesystem tasks. **Windows only app, Linux on roadmap**.
 
+## Demo
+
+[Go to demo (Youtube)](https://youtu.be/hYKSo_WblS4)
+
 ## Screenshots
 
 ![main_screenshot](./.github/images/main_screenshot.png)

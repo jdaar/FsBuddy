@@ -66,6 +66,14 @@ namespace Service
                         try
                         {
                             File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fsEvent.Name));
+                            Task.Run(
+                                async () => {
+                                    if (RegisterExecutionCallback == null)
+                                        return;
+                                    await RegisterExecutionCallback(watcher.Id);
+                                }, 
+                                CancellationToken.None
+                            );
                         }
                         catch (Exception error)
                         {
@@ -86,12 +94,19 @@ namespace Service
                         try
                         {
                             File.Move(fsEvent.FullPath, Path.Combine(watcher.OutputPath, fileName));
+                            Task.Run(
+                                async () => {
+                                    if (RegisterExecutionCallback == null)
+                                        return;
+                                    await RegisterExecutionCallback(watcher.Id);
+                                }, 
+                                CancellationToken.None
+                            );
                         } catch (Exception error)
                         {
                             Log.Error(error, "Couldn't execute MOVE action");
                         }
                     }
-                    RegisterExecutionCallback?.Invoke(watcher.Id);
                 }
             }
         };

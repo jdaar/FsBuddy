@@ -29,6 +29,7 @@ namespace Configuration
         public void Dispose()
         {
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public async Task CreateWatcher(Watcher watcher)

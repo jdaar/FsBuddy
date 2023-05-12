@@ -5,7 +5,7 @@ An open-source platform for filesystem automation provides a user-friendly graph
 
 ## Screenshots
 
-![app_screenshot](./.github/images/main_screenshot.png)
+![main_screenshot](./.github/images/main_screenshot.png)
 
 ## Features
 - Subscribe to a directory file changes
@@ -18,7 +18,19 @@ Go to the [Releases](https://github.com/jdaar/FsBuddy/releases) section and down
 
 ## Usage
 
+The following pictures will show you the basic structure of the UI:
 
+### Header structure
+
+![header_explanation](./.github/images/header_explanation.png)
+
+### Watcher list structure
+
+![watcherlist_explanation](./.github/images/watcherlist_explanation.png)
+
+### Create/Edit structure
+
+![create_edit_explanation](./.github/images/create_edit_explanation.png)
 
 ## Roadmap
 

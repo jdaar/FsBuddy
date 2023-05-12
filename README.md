@@ -1,7 +1,7 @@
 ![header](./.github/images/header.png)
 ---
 
-An open-source platform for filesystem automation provides a user-friendly graphical user interface (GUI) that is designed to simplify the automation of various filesystem tasks. The platform is built using open-source technologies and is freely accessible to all. **Windows only app, Linux on roadmap**.
+An open-source platform for filesystem automation provides a user-friendly graphical user interface (GUI) that is designed to simplify the automation of various filesystem tasks. **Windows only app, Linux on roadmap**.
 
 ## Screenshots
 

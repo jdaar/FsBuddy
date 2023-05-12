@@ -1,5 +1,10 @@
+
+
 ![header](./.github/images/header.png)
 ---
+| Build                                                                                                                                                   |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [![ci](https://github.com/jdaar/FsBuddy/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/jdaar/FsBuddy/actions/workflows/ci.yaml) |
 
 An open-source platform for filesystem automation provides a user-friendly graphical user interface (GUI) that is designed to simplify the automation of various filesystem tasks. **Windows only app, Linux on roadmap**.
 

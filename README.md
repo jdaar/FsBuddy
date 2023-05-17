@@ -45,14 +45,19 @@ The following pictures will show you the basic structure of the UI:
 
 ### Milestones
 
-- [ ] Generic WatcherAction
-    - [ ] Allow the watcher to perform a custom action when activated (Javascript VM)
+- [ ] Javascript VM implementation, managed threads and anonymous pipe implementation
+- [ ] User-defined WatcherActions
+    - [ ] Allow the watcher to perform a custom action when activated (after Javascript VM implementation)
 - [ ] Filters
-    - [ ] By file size
-    - [ ] By content (Javascript VM)
+    - [ ] User-defined WatcherAction (after Javascript VM implementation)
 - [ ] File data extraction
     - [ ] Export to csv
+    - [ ] CRUD table with LiteDB (after migration)
+    - [ ] User-defined tables with LiteDB
+    - [ ] Data insertion to user-defined tables
 - [ ] Add support for Linux
+- [ ] Migrate from SQLite to LiteDB
+    - [ ] Reimplement ThreadManager with LiteDB as datasource (this is because of LiteDB's thread safety 
 
 ### Features
 
